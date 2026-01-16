@@ -7,15 +7,25 @@ const {
   editEventbyId,
   deleteEventById
 } = require('./event.service')
+const { translate } = require('@vitalets/google-translate-api')
 const router = express.Router()
 
 router.post('/insert', upload.single('foto'), async (req, res) => {
   try {
+    const { description, location } = req.body
+
+    const [transDesk, transLoc] = await Promise.all([
+      translate(description || '', { to: 'en' }),
+      translate(location || '', { to: 'en' })
+    ])
+
     const newEvents = {
       nameEvent: req.body.nameEvent,
-      description: req.body.description,
+      description_id: description,
+      description_en: transDesk.text,
       foto: req.file ? `/uploads/${req.file.filename}` : null,
-      location: req.body.location,
+      location_id: location,
+      location_en: transLoc.text,
       startdate: req.body.startdate,
       enddate: req.body.enddate || null
     }
@@ -47,12 +57,28 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', upload.single('foto'), async (req, res) => {
   try {
-    const eventId = req.params.id
-    const event = req.body
-    if (req.file) {
-      event.foto = `/uploads/${req.file.filename}`
+    const eventId = parseInt(req.params.id)
+    const updateDataEvent = {}
+
+    const { description_id, location_id } = req.body
+
+    if (req.body.nameEvent) updateDataEvent.nameEvent = req.body.nameEvent
+    if (description_id) {
+      const trans = await translate(description_id, { to: 'en' })
+      updateDataEvent.description_id = description_id
+      updateDataEvent.description_en = trans.text
     }
-    const updateEvent = await editEventbyId(eventId, event)
+    if (location_id) {
+      const trans = await translate(location_id, { to: 'en' })
+      updateDataEvent.location_id = location_id
+      updateDataEvent.location_en = trans.text
+    }
+    if (req.file) {
+      updateDataEvent.foto = `/uploads/${req.file.filename}`
+    }
+    if (req.body.startdate) updateDataEvent.startdate = req.body.startdate
+    if (req.body.enddate) updateDataEvent.enddate = req.body.enddate
+    const updateEvent = await editEventbyId(eventId, updateDataEvent)
     res.send(updateEvent)
   } catch (error) {
     res.status(400).send(error.message)

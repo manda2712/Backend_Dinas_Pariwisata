@@ -4,9 +4,11 @@ async function insertEvent (event) {
   const newEvent = await prisma.event.create({
     data: {
       nameEvent: event.nameEvent,
-      description: event.description,
+      description_id: event.description_id,
+      description_en: event.description_en,
       foto: event.foto,
-      location: event.location,
+      location_id: event.location_id,
+      location_en: event.location_en,
       startdate: event.startdate ? new Date(event.startdate) : null,
       enddate: event.enddate ? new Date(event.enddate) : null
     }
@@ -19,8 +21,10 @@ async function findEvent () {
     select: {
       id: true,
       nameEvent: true,
-      description: true,
-      location: true,
+      description_id: true,
+      description_en: true,
+      location_id: true,
+      location_en: true,
       foto: true,
       startdate: true,
       enddate: true
@@ -45,8 +49,10 @@ async function editEvent (id, event) {
     },
     data: {
       nameEvent: event.nameEvent,
-      description: event.description,
-      location: event.location,
+      ...(event.location_id && { location_id: event.location_id }),
+      ...(event.location_en && { location_en: event.location_en }),
+      ...(event.description_id && { deskripsi_id: event.description_id}),
+      ...(event.description_en && { deskripsi_en: event.description_en }), //3
       foto: event.foto,
       startdate: event.startdate ? new Date(event.startdate) : undefined,
       enddate: event.enddate ? new Date(event.enddate) : undefined

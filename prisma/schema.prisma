@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id            Int    @id @default(autoincrement())
+  nama_Lengkap  String
+  jenis_kelamin String
+  username      String
+  password      String
+  role          Role
+}
+
+enum Role {
+  Admin
+  user
+}
+
+model TourPackage {
+  id          Int    @id @default(autoincrement())
+  nama_wisata String
+  harga       String
+  deskripsi   String
+  kontak      String
+  media       String
+  lokasi      String
+}
+
+model Ulasan {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  rating    Int
+  komentar  String
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  nameEvent   String
+  description_id String
+  description_en String
+  location_id    String
+  location_en    String
+  foto        String
+  startdate   DateTime
+  enddate     DateTime
+}
+
+model desaWisata {
+  id           Int         @id @default(autoincrement())
+  namaDesa_id  String
+  namaDesa_en  String
+  deskripsi_id String
+  deskripsi_en String
+  lokasi_id    String
+  lokasi_en    String
+  foto         String
+  longitude    String
+  latitude     String
+  jenisDesa    JenisDesa
+  jarak        jarakDesa[]
+}
+
+model jarakDesa {
+  id          Int        @id @default(autoincrement())
+  desaId      Int
+  titikKota   Kota
+  jalur_laut  String
+  jalur_darat String
+  jalur_udara String
+  desa        desaWisata @relation(fields: [desaId], references: [id], onDelete: Cascade)
+}
+
+enum Kota {
+  PALU
+  LUWUK
+}
+
+enum JenisDesa {
+  DESA_UNGGULAN
+  DESA_WISATA
+}
+
+model Kuliner {
+  id           Int          @id @default(autoincrement())
+  nama_makanan String
+  foto         String
+  deskripsi_id    String
+  deskripsi_en    String
+  lokasi      String
+  rumahMakans  RumahMakan[]
+}
+
+model RumahMakan {
+  id         Int     @id @default(autoincrement())
+  resto      String
+  kulinerId  Int
+  link_gmaps String
+  kuliner    Kuliner @relation(fields: [kulinerId], references: [id], onDelete: Cascade)
+}
+
+model Hotel {
+  id                 Int     @id @default(autoincrement())
+  nama_hotel         String
+  foto               String
+  telepon            String
+  jumlah_kamar       String
+  jumlah_tempatTidur String
+  harga              String?
+  website            String?
+  link_gmaps         String
+  lokasi             String
+}
+
+model Visitor {
+  id        String     @id @default(uuid())
+  uid       String     @unique
+  userAgent String
+  createdAt DateTime   @default(now())
+  pageViews pageView[]
+}
+
+model pageView {
+  id        Int      @id @default(autoincrement())
+  page      String
+  visitorId String
+  createdAt DateTime @default(now())
+  visitor   Visitor  @relation(fields: [visitorId], references: [uid])
+}

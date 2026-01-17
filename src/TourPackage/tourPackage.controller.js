@@ -3,16 +3,27 @@ const tourPackageService = require('./tourPackage.service')
 const router = express.Router()
 
 const upload = require('../middleware/upload.middleware')
+const { translate } = require('@vitalets/google-translate-api')
 
 router.post('/insert', upload.single('media'), async (req, res) => {
   try {
+    const { nama_wisata, deskripsi, lokasi } = req.body
+
+    const [transNama, transDesk, transLok] = await Promise.all([
+      translate(nama_wisata || '', { to: 'en' }),
+      translate(deskripsi || '', { to: 'en' }),
+      translate(lokasi || '', { to: 'en' })
+    ])
     const newTourPackges = {
-      nama_wisata: req.body.nama_wisata,
+      nama_wisata_id: nama_wisata,
+      nama_wisata_en: transNama.text,
       harga: req.body.harga,
-      deskripsi: req.body.deskripsi,
+      deskripsi_id: deskripsi,
+      deskripsi_en: transDesk.text,
       kontak: req.body.kontak,
       media: req.file ? `/uploads/${req.file.filename}` : null,
-      lokasi: req.body.lokasi
+      lokasi_id: lokasi,
+      lokasi_en: transLok.text
     }
     const newTourPackge = await tourPackageService.createTourPackage(
       newTourPackges
@@ -47,17 +58,34 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', upload.single('media'), async (req, res) => {
   try {
     const tourPackageId = parseInt(req.params.id)
-    const tourPackage = {
-      ...(req.body.nama_wisata && { nama_wisata: req.body.nama_wisata }),
-      ...(req.body.harga && { harga: req.body.harga }),
-      ...(req.body.deskripsi && { deskripsi: req.body.deskripsi }),
-      ...(req.body.kontak && { kontak: req.body.kontak }),
-      ...(req.file && { media: `/uploads/${req.file.filename}` }),
-      ...(req.body.lokasi && { lokasi: req.body.lokasi })
+    const updateDataPackage = {}
+
+    const { nama_wisata_id, deskripsi_id, lokasi_id } = req.body
+
+    if (nama_wisata_id) {
+      const trans = await translate(nama_wisata_id, { to: 'en' })
+      updateDataPackage.nama_wisata_id = namaDesa_id
+      updateData.nama_wisata_en = trans.text
     }
+
+    if (deskripsi_id) {
+      const trans = await translate(deskripsi_id, { to: 'en' })
+      updateDataPackage.deskripsi_id = deskripsi_id
+      updateDataPackage.deskripsi_en = trans.text
+    }
+
+    if (lokasi_id) {
+      const trans = await translate(lokasi_id, { to: 'en' })
+      updateDataPackage.lokasi_id = lokasi_id
+      updateDataPackage.lokasi_en = trans.text
+    }
+    if (req.file) updateDataPackage.media = `/uploads/${req.file.filename}`
+    if (req.body.harga) updateDataPackage.harga = req.body.harga
+    if (req.body.kontak) updateDataPackage.kontak = req.body.kontak
+
     const updateTourPackage = await tourPackageService.editTourPackageById(
       tourPackageId,
-      tourPackage
+      updateDataPackage
     )
     res.status(200).json(updateTourPackage)
   } catch (error) {

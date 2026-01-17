@@ -28,13 +28,16 @@ enum Role {
 }
 
 model TourPackage {
-  id          Int    @id @default(autoincrement())
-  nama_wisata String
-  harga       String
-  deskripsi   String
-  kontak      String
-  media       String
-  lokasi      String
+  id             Int    @id @default(autoincrement())
+  nama_wisata_id String
+  nama_wisata_en String
+  harga          String
+  deskripsi_id   String
+  deskripsi_en   String
+  kontak         String
+  media          String
+  lokasi_id      String
+  lokasi_en      String
 }
 
 model Ulasan {
@@ -46,15 +49,15 @@ model Ulasan {
 }
 
 model Event {
-  id          Int      @id @default(autoincrement())
-  nameEvent   String
+  id             Int      @id @default(autoincrement())
+  nameEvent      String
   description_id String
   description_en String
   location_id    String
   location_en    String
-  foto        String
-  startdate   DateTime
-  enddate     DateTime
+  foto           String
+  startdate      DateTime
+  enddate        DateTime
 }
 
 model desaWisata {
@@ -96,9 +99,9 @@ model Kuliner {
   id           Int          @id @default(autoincrement())
   nama_makanan String
   foto         String
-  deskripsi_id    String
-  deskripsi_en    String
-  lokasi      String
+  deskripsi_id String
+  deskripsi_en String
+  lokasi       String
   rumahMakans  RumahMakan[]
 }
 

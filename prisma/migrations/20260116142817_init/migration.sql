@@ -22,12 +22,15 @@ CREATE TABLE "Admin" (
 -- CreateTable
 CREATE TABLE "TourPackage" (
     "id" SERIAL NOT NULL,
-    "nama_wisata" TEXT NOT NULL,
+    "nama_wisata_id" TEXT NOT NULL,
+    "nama_wisata_en" TEXT NOT NULL,
     "harga" TEXT NOT NULL,
-    "deskripsi" TEXT NOT NULL,
+    "deskripsi_id" TEXT NOT NULL,
+    "deskripsi_en" TEXT NOT NULL,
     "kontak" TEXT NOT NULL,
     "media" TEXT NOT NULL,
-    "lokasi" TEXT NOT NULL,
+    "lokasi_id" TEXT NOT NULL,
+    "lokasi_en" TEXT NOT NULL,
 
     CONSTRAINT "TourPackage_pkey" PRIMARY KEY ("id")
 );
@@ -47,8 +50,10 @@ CREATE TABLE "Ulasan" (
 CREATE TABLE "Event" (
     "id" SERIAL NOT NULL,
     "nameEvent" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "location" TEXT NOT NULL,
+    "description_id" TEXT NOT NULL,
+    "description_en" TEXT NOT NULL,
+    "location_id" TEXT NOT NULL,
+    "location_en" TEXT NOT NULL,
     "foto" TEXT NOT NULL,
     "startdate" TIMESTAMP(3) NOT NULL,
     "enddate" TIMESTAMP(3) NOT NULL,
@@ -59,10 +64,13 @@ CREATE TABLE "Event" (
 -- CreateTable
 CREATE TABLE "desaWisata" (
     "id" SERIAL NOT NULL,
-    "namaDesa" TEXT NOT NULL,
+    "namaDesa_id" TEXT NOT NULL,
+    "namaDesa_en" TEXT NOT NULL,
+    "deskripsi_id" TEXT NOT NULL,
+    "deskripsi_en" TEXT NOT NULL,
+    "lokasi_id" TEXT NOT NULL,
+    "lokasi_en" TEXT NOT NULL,
     "foto" TEXT NOT NULL,
-    "lokasi" TEXT NOT NULL,
-    "deskripsi" TEXT NOT NULL,
     "longitude" TEXT NOT NULL,
     "latitude" TEXT NOT NULL,
     "jenisDesa" "JenisDesa" NOT NULL,
@@ -87,7 +95,8 @@ CREATE TABLE "Kuliner" (
     "id" SERIAL NOT NULL,
     "nama_makanan" TEXT NOT NULL,
     "foto" TEXT NOT NULL,
-    "deskripsi" TEXT NOT NULL,
+    "deskripsi_id" TEXT NOT NULL,
+    "deskripsi_en" TEXT NOT NULL,
     "lokasi" TEXT NOT NULL,
 
     CONSTRAINT "Kuliner_pkey" PRIMARY KEY ("id")
@@ -119,8 +128,34 @@ CREATE TABLE "Hotel" (
     CONSTRAINT "Hotel_pkey" PRIMARY KEY ("id")
 );
 
--- AddForeignKey
-ALTER TABLE "jarakDesa" ADD CONSTRAINT "jarakDesa_desaId_fkey" FOREIGN KEY ("desaId") REFERENCES "desaWisata"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- CreateTable
+CREATE TABLE "Visitor" (
+    "id" TEXT NOT NULL,
+    "uid" TEXT NOT NULL,
+    "userAgent" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Visitor_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "pageView" (
+    "id" SERIAL NOT NULL,
+    "page" TEXT NOT NULL,
+    "visitorId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "pageView_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Visitor_uid_key" ON "Visitor"("uid");
 
 -- AddForeignKey
-ALTER TABLE "RumahMakan" ADD CONSTRAINT "RumahMakan_kulinerId_fkey" FOREIGN KEY ("kulinerId") REFERENCES "Kuliner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "jarakDesa" ADD CONSTRAINT "jarakDesa_desaId_fkey" FOREIGN KEY ("desaId") REFERENCES "desaWisata"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RumahMakan" ADD CONSTRAINT "RumahMakan_kulinerId_fkey" FOREIGN KEY ("kulinerId") REFERENCES "Kuliner"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "pageView" ADD CONSTRAINT "pageView_visitorId_fkey" FOREIGN KEY ("visitorId") REFERENCES "Visitor"("uid") ON DELETE RESTRICT ON UPDATE CASCADE;

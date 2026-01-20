@@ -50,21 +50,13 @@ async function editTourPackage (id, tourPackage) {
       id: parseInt(id)
     },
     data: {
-      ...(tourPackage.nama_wisata_id && {
-        nama_wisata_id: tourPackage.nama_wisata_id
-      }),
-      ...(tourPackage.nama_wisata_en && {
-        nama_wisata_en: tourPackage.nama_wisata_en
-      }),
-      harga: tourPackage.harga,
-      ...(tourPackage.deskripsi_id && {
-        deskripsi_id: tourPackage.deskripsi_id
-      }),
-      ...(tourPackage.deskripsi_en && {
-        deskripsi_en: tourPackage.deskripsi_en
-      }),
-      kontak: tourPackage.kontak,
-      media: tourPackage.media,
+      ...(tourPackage.nama_wisata_id && {nama_wisata_id: tourPackage.nama_wisata_id}),
+      ...(tourPackage.nama_wisata_en && {nama_wisata_en: tourPackage.nama_wisata_en}),
+      ...(tourPackage.harga && {harga: tourPackage.harga}),
+      ...(tourPackage.deskripsi_id && {deskripsi_id: tourPackage.deskripsi_id}),
+      ...(tourPackage.deskripsi_en && {deskripsi_en: tourPackage.deskripsi_en}),
+      ...(tourPackage.kontak && {kontak: tourPackage.kontak}),
+      ...(tourPackage.media && {media: tourPackage.media}),
       ...(tourPackage.lokasi_id && { lokasi_id: tourPackage.lokasi_id }),
       ...(tourPackage.lokasi_en && { lokasi_en: tourPackage.lokasi_en })
     }
@@ -80,22 +72,10 @@ async function deleteTourPackage (id) {
   })
 }
 
-async function deleteAllTourPackage () {
-  try {
-    await prisma.tourPackage.deleteMany()
-    return {
-      message: 'Semua Tour Package berhasil dihapus!'
-    }
-  } catch (error) {
-    throw new Error('Gagal menghapus semua Tour Package: ' + error.message)
-  }
-}
-
 module.exports = {
   insertTourPackage,
   findTourPacakage,
   findTourPacakageById,
   editTourPackage,
   deleteTourPackage,
-  deleteAllTourPackage
 }

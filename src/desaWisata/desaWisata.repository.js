@@ -59,9 +59,13 @@ async function editDesa (id, desaWisata) {
       ...(desaWisata.lokasi_en && { lokasi_en: desaWisata.lokasi_en }),
       ...(desaWisata.deskripsi_id && { deskripsi_id: desaWisata.deskripsi_id }),
       ...(desaWisata.deskripsi_en && { deskripsi_en: desaWisata.deskripsi_en }), //3
-      longitude: desaWisata.longitude,
-      latitude: desaWisata.latitude,
-      jenisDesa: desaWisata.jenisDesa
+      // PERBAIKAN: Tambahkan pengecekan untuk field lainnya agar tidak null secara tidak sengaja
+      ...(desaWisata.longitude && { longitude: desaWisata.longitude }),
+      ...(desaWisata.latitude && { latitude: desaWisata.latitude }),
+      ...(desaWisata.jenisDesa && { jenisDesa: desaWisata.jenisDesa }),
+
+      // PERBAIKAN: Tambahkan update foto jika ada file baru yang diupload
+      ...(desaWisata.foto && { foto: desaWisata.foto }),
     }
   })
   return updateDesa

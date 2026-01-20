@@ -1,33 +1,33 @@
 const express = require('express')
 const tourPackageService = require('./tourPackage.service')
 const router = express.Router()
-
 const upload = require('../middleware/upload.middleware')
-const { translate } = require('@vitalets/google-translate-api')
 
 router.post('/insert', upload.single('media'), async (req, res) => {
   try {
-    const { nama_wisata, deskripsi, lokasi } = req.body
+    const { 
+      nama_wisata_id,
+      nama_wisata_en,
+      deskripsi_id,
+      deskripsi_en,
+      lokasi_id,
+      lokasi_en,
+      harga,
+      kontak } = req.body
 
-    const [transNama, transDesk, transLok] = await Promise.all([
-      translate(nama_wisata || '', { to: 'en' }),
-      translate(deskripsi || '', { to: 'en' }),
-      translate(lokasi || '', { to: 'en' })
-    ])
     const newTourPackges = {
-      nama_wisata_id: nama_wisata,
-      nama_wisata_en: transNama.text,
-      harga: req.body.harga,
-      deskripsi_id: deskripsi,
-      deskripsi_en: transDesk.text,
-      kontak: req.body.kontak,
+      id: req.body.id,
+      nama_wisata_id: nama_wisata_id,
+      nama_wisata_en: nama_wisata_en || '',
+      harga: harga,
+      deskripsi_id: deskripsi_id,
+      deskripsi_en: deskripsi_en || '',
+      kontak: kontak,
       media: req.file ? `/uploads/${req.file.filename}` : null,
-      lokasi_id: lokasi,
-      lokasi_en: transLok.text
+      lokasi_id: lokasi_id,
+      lokasi_en: lokasi_en || ''
     }
-    const newTourPackge = await tourPackageService.createTourPackage(
-      newTourPackges
-    )
+    const newTourPackge = await tourPackageService.createTourPackage(newTourPackges)
     res.status(201).json(newTourPackge)
   } catch (error) {
     console.error('❌ ERROR:', error)
@@ -40,15 +40,15 @@ router.get('/', async (req, res) => {
     const tourPackage = await tourPackageService.getAllTourPackage()
     res.status(200).json(tourPackage)
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: error.message })
   }
 })
 
 router.get('/:id', async (req, res) => {
   try {
-    const tourPackage = await tourPackageService.getTourPackageById(
-      req.params.id
-    )
+    const tourPackage = await tourPackageService.getTourPackageById(req.params.id)
+    console.log('Data dari DB:', tourPackage)
     res.status(200).json(tourPackage)
   } catch (error) {
     res.status(404).json({ message: error.message })
@@ -58,49 +58,28 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', upload.single('media'), async (req, res) => {
   try {
     const tourPackageId = parseInt(req.params.id)
-    const updateDataPackage = {}
+    const updateDataPackage = { ...req.body }
 
-    const { nama_wisata_id, deskripsi_id, lokasi_id } = req.body
-
-    if (nama_wisata_id) {
-      const trans = await translate(nama_wisata_id, { to: 'en' })
-      updateDataPackage.nama_wisata_id = namaDesa_id
-      updateData.nama_wisata_en = trans.text
-    }
-
-    if (deskripsi_id) {
-      const trans = await translate(deskripsi_id, { to: 'en' })
-      updateDataPackage.deskripsi_id = deskripsi_id
-      updateDataPackage.deskripsi_en = trans.text
-    }
-
-    if (lokasi_id) {
-      const trans = await translate(lokasi_id, { to: 'en' })
-      updateDataPackage.lokasi_id = lokasi_id
-      updateDataPackage.lokasi_en = trans.text
-    }
+    // const { nama_wisata_id, deskripsi_id, lokasi_id } = req.body
     if (req.file) updateDataPackage.media = `/uploads/${req.file.filename}`
     if (req.body.harga) updateDataPackage.harga = req.body.harga
     if (req.body.kontak) updateDataPackage.kontak = req.body.kontak
 
-    const updateTourPackage = await tourPackageService.editTourPackageById(
-      tourPackageId,
-      updateDataPackage
-    )
+    const updateTourPackage = await tourPackageService.editTourPackageById(tourPackageId, updateDataPackage)
     res.status(200).json(updateTourPackage)
   } catch (error) {
     res.status(400).send(error.message)
   }
 })
 
-router.delete('/deleteAll', async (req, res) => {
-  try {
-    const result = await tourPackageService.deleteAllTourPackageService()
-    res.status(200).json(result)
-  } catch (error) {
-    res.status(500).json({ message: error.message })
-  }
-})
+// router.delete('/deleteAll', async (req, res) => {
+//   try {
+//     const result = await tourPackageService.deleteAllTourPackageService()
+//     res.status(200).json(result)
+//   } catch (error) {
+//     res.status(500).json({ message: error.message })
+//   }
+// })
 
 router.delete('/:id', async (req, res) => {
   try {

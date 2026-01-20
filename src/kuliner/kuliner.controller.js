@@ -6,20 +6,26 @@ const { translate } = require('@vitalets/google-translate-api')
 
 router.post('/insert', upload.single('foto'), async (req, res) => {
   try {
-    const { nama_makanan, lokasi, deskripsi } = req.body
-    // 2. Terjemahkan deskripsi ke Inggris secara otomatis
-    const [transDeskripsi] = await Promise.all([
-      translate(deskripsi || '', { to: 'en' })
-    ])
+    // 1. Tangkap semua data dari req.body yang sudah dikirim FE (termasuk hasil translate)
+    const { 
+      nama_makanan, 
+      lokasi, 
+      deskripsi_id, 
+      deskripsi_en 
+    } = req.body
+    // // 2. Terjemahkan deskripsi ke Inggris secara otomatis
+    // const [transDeskripsi] = await Promise.all([
+    //   translate(deskripsi || '', { to: 'en' })
+    // ])
 
     const newKuliners = {
-      id: req.body.id,
-      nama_makanan: req.body.nama_makanan,
-      lokasi: req.body.lokasi,
+      nama_makanan: nama_makanan,
+      lokasi: lokasi,
       foto: req.file ? `/uploads/${req.file.filename}` : '',
-      deskripsi_id: deskripsi || '',
-      deskripsi_en: transDeskripsi.text
+      deskripsi_id: deskripsi_id || '',
+      deskripsi_en: deskripsi_en || '' // Mengambil hasil translate dari Frontend
     }
+
     const newKuliner = await kulinerService.createKuliner(newKuliners)
     res.status(200).json(newKuliner)
   } catch (error) {
@@ -46,28 +52,30 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 })
+
 router.patch('/:id', upload.single('foto'), async (req, res) => {
   try {
     const kulinerId = parseInt(req.params.id)
+    const { 
+      nama_makanan, 
+      lokasi, 
+      deskripsi_id, 
+      deskripsi_en 
+    } = req.body
     const updateDataKuliner = {}
-    const { deskripsi_id, nama_makanan, lokasi } = req.body
+    // const { deskripsi_id, nama_makanan, lokasi } = req.body
 
-    // DESKRIPSI (FIX UTAMA)
-    if (deskripsi_id) {
-      const trans = await translate(deskripsi_id, { to: 'en' })
-      updateDataKuliner.deskripsi_id = deskripsi_id
-      updateDataKuliner.deskripsi_en = trans.text
-    }
-
-    if (req.file) updateDataKuliner.foto = `/uploads/${req.file.filename}`
-    if (nama_makanan !== undefined)
-      updateDataKuliner.nama_makanan = nama_makanan
+    // Masukkan data hanya jika dikirim oleh Frontend
+    if (nama_makanan !== undefined) updateDataKuliner.nama_makanan = nama_makanan
     if (lokasi !== undefined) updateDataKuliner.lokasi = lokasi
+    if (deskripsi_id !== undefined) updateDataKuliner.deskripsi_id = deskripsi_id
+    if (deskripsi_en !== undefined) updateDataKuliner.deskripsi_en = deskripsi_en
+    if (req.file) updateDataKuliner.foto = `/uploads/${req.file.filename}`
 
-    const updateKuliner = await kulinerService.updateKuliner(
-      kulinerId,
-      updateDataKuliner
-    )
+        const updateKuliner = await kulinerService.updateKuliner(
+          kulinerId,
+          updateDataKuliner
+        )
 
     res.status(200).json(updateKuliner)
   } catch (error) {

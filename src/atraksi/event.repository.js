@@ -48,14 +48,14 @@ async function editEvent (id, event) {
       id: parseInt(id) // ✅ konversi biar sesuai tipe Prisma
     },
     data: {
-      nameEvent: event.nameEvent,
+      ...(event.nameEvent && { nameEvent: event.nameEvent }),
       ...(event.location_id && { location_id: event.location_id }),
       ...(event.location_en && { location_en: event.location_en }),
-      ...(event.description_id && { deskripsi_id: event.description_id}),
-      ...(event.description_en && { deskripsi_en: event.description_en }), //3
-      foto: event.foto,
-      startdate: event.startdate ? new Date(event.startdate) : undefined,
-      enddate: event.enddate ? new Date(event.enddate) : undefined
+      ...(event.description_id && { description_id: event.description_id }),
+      ...(event.description_en && { description_en: event.description_en }),
+      ...(event.foto && { foto: event.foto }),
+      ...(event.startdate && { startdate: new Date(event.startdate) }),
+      ...(event.enddate && { enddate: new Date(event.enddate) })
     }
   })
   return updateEvent

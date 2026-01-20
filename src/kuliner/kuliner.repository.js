@@ -28,12 +28,12 @@ async function findKuliner() {
 }
 
 async function findKulinerById(id) {
-  const kuliner = await prisma.kuliner.findUnique({
+  const data = await prisma.kuliner.findUnique({
     where: {
       id: parseInt(id),
     },
   });
-  return kuliner;
+  return data;
 }
 
 async function editKuliner(id, kuliner) {
@@ -42,11 +42,11 @@ async function editKuliner(id, kuliner) {
       id: parseInt(id),
     },
     data: {
-      nama_makanan: kuliner.nama_makanan,
-      foto: kuliner.foto,
+      ...( kuliner.nama_makanan && { nama_makanan: kuliner.nama_makanan }),
+      ...( kuliner.foto && { foto: kuliner.foto }),
       ...( kuliner.deskripsi_id && { deskripsi_id: kuliner.deskripsi_id }),
       ...( kuliner.deskripsi_en && { deskripsi_en: kuliner.deskripsi_en }),
-      lokasi: kuliner.lokasi
+      ...( kuliner.lokasi && { lokasi: kuliner.lokasi })
 
     },
   });

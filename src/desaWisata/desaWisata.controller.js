@@ -2,33 +2,33 @@ const express = require('express')
 const upload = require('../middleware/upload.middleware')
 const router = express.Router()
 const desaService = require('./desaWisata.service')
-//1
-const { translate } = require('@vitalets/google-translate-api')
 
 router.post('/insert', upload.single('foto'), async (req, res) => {
   try {
-    const { namaDesa, lokasi, deskripsi, longitude, latitude, jenisDesa } =
-      req.body
-    // 2. Proses Terjemahan Otomatis
-    // Menggunakan Promise.all agar proses translate berjalan berbarengan (lebih cepat)
-    const [transNama, transLokasi, transDesk] = await Promise.all([
-      translate(namaDesa || '', { to: 'en' }),
-      translate(lokasi || '', { to: 'en' }),
-      translate(deskripsi || '', { to: 'en' })
-    ])
+    const { 
+      namaDesa_id, 
+      namaDesa_en, 
+      lokasi_id, 
+      lokasi_en, 
+      deskripsi_id, 
+      deskripsi_en, 
+      longitude, 
+      latitude, 
+      jenisDesa 
+    } = req.body
 
     const newDesas = {
       id: req.body.id,
-      namaDesa_id: namaDesa,
-      namaDesa_en: transNama.text,
-      lokasi_id: lokasi,
-      lokasi_en: transLokasi.text,
-      deskripsi_id: deskripsi,
-      deskripsi_en: transDesk.text,
+      namaDesa_id: namaDesa_id,
+      namaDesa_en: namaDesa_en || '',
+      lokasi_id: lokasi_id,
+      lokasi_en: lokasi_en || '',
+      deskripsi_id: deskripsi_id,
+      deskripsi_en: deskripsi_en || '',
       foto: req.file ? `/uploads/${req.file.filename}` : null,
-      longitude: req.body.longitude,
-      latitude: req.body.latitude,
-      jenisDesa: req.body.jenisDesa
+      longitude: longitude,
+      latitude: latitude,
+      jenisDesa: jenisDesa
     }
     const newDesa = await desaService.createDesa(newDesas)
     res.status(201).json(newDesa)
@@ -60,32 +60,8 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', upload.single('foto'), async (req, res) => {
   try {
     const desaWisataId = parseInt(req.params.id)
-    const updateData = {}
-    const {
-      namaDesa_id,
-      lokasi_id,
-      deskripsi_id,
-      longitude,
-      latitude,
-      jenisDesa
-    } = req.body
-    if (namaDesa_id) {
-      const trans = await translate(namaDesa_id, { to: 'en' })
-      updateData.namaDesa_id = namaDesa_id
-      updateData.namaDesa_en = trans.text
-    }
+    const updateData = { ...req.body }
 
-    if (lokasi_id) {
-      const trans = await translate(lokasi_id, { to: 'en' })
-      updateData.lokasi_id = lokasi_id
-      updateData.lokasi_en = trans.text
-    }
-
-    if (deskripsi_id) {
-      const trans = await translate(deskripsi_id, { to: 'en' })
-      updateData.deskripsi_id = deskripsi_id
-      updateData.deskripsi_en = trans.text
-    }
     if (req.file) updateData.foto = `/uploads/${req.file.filename}`
     if (req.body.longitude) updateData.longitude = req.body.longitude
     if (req.body.latitude) updateData.latitude = req.body.latitude

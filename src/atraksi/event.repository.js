@@ -10,7 +10,8 @@ async function insertEvent (event) {
       location_id: event.location_id,
       location_en: event.location_en,
       startdate: event.startdate ? new Date(event.startdate) : null,
-      enddate: event.enddate ? new Date(event.enddate) : null
+      enddate: event.enddate ? new Date(event.enddate) : null,
+      link_video: event.link_video
     }
   })
   return newEvent
@@ -27,7 +28,8 @@ async function findEvent () {
       location_en: true,
       foto: true,
       startdate: true,
-      enddate: true
+      enddate: true,
+      link_video: link_video
     }
   })
   return event
@@ -55,7 +57,8 @@ async function editEvent (id, event) {
       ...(event.description_en && { description_en: event.description_en }),
       ...(event.foto && { foto: event.foto }),
       ...(event.startdate && { startdate: new Date(event.startdate) }),
-      ...(event.enddate && { enddate: new Date(event.enddate) })
+      ...(event.enddate && { enddate: new Date(event.enddate) }),
+      ...(event.link_video && { link_video: event.link_video })
     }
   })
   return updateEvent

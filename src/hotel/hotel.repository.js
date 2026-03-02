@@ -13,7 +13,8 @@ async function insertHotel (hotel) {
       harga: hotel.harga,
       website: hotel.website,
       link_gmaps: hotel.link_gmaps,
-      lokasi: hotel.lokasi
+      lokasi: hotel.lokasi,
+      link_video: hotel.link_video
     }
   })
   return newHotel
@@ -31,7 +32,8 @@ async function findHotel () {
       harga: true,
       website: true,
       link_gmaps: true,
-      lokasi: true
+      lokasi: true,
+      link_video: true
     }
   })
   return dataHotel
@@ -62,7 +64,8 @@ async function editHotel (id, hotel) {
       harga: hotel.harga,
       website: hotel.website,
       link_gmaps: hotel.link_gmaps,
-      lokasi: hotel.lokasi
+      lokasi: hotel.lokasi,
+      link_video: link_video
     }
   })
   return updateHotel

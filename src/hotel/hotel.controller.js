@@ -16,7 +16,8 @@ router.post('/insert', upload.single('foto'), async (req, res) => {
       harga: req.body.harga,
       website: req.body.website,
       link_gmaps: req.body.link_gmaps,
-      lokasi: req.body.lokasi
+      lokasi: req.body.lokasi,
+      link_video: link_video
     }
     const newHotel = await hotelService.createHotel(newHotels)
     res.status(200).json(newHotel)
@@ -59,7 +60,8 @@ router.patch('/:id', upload.single('foto'), async (req, res) => {
       ...(req.body.harga && { harga: req.body.harga }),
       ...(req.body.website && { website: req.body.website }),
       ...(req.body.link_gmaps && { link_gmaps: req.body.link_gmaps }),
-      ...(req.body.lokasi && { lokasi: req.body.lokasi })
+      ...(req.body.lokasi && { lokasi: req.body.lokasi }),
+      ...(req.body.link_video && { link_video: req.body.link_video })
     }
     const updateHotel = await hotelService.updateHotelById(hotelId, hotel)
     res.status(200).json(updateHotel)

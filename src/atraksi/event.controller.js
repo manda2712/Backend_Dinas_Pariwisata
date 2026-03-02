@@ -1,26 +1,21 @@
 const express = require('express')
 const upload = require('../middleware/upload.middleware')
-const eventService =  require('./event.service')
+const eventService = require('./event.service')
 // const { translate } = require('@vital/ets/google-translate-api')
 const router = express.Router()
 
 router.post('/insert', upload.single('foto'), async (req, res) => {
   try {
     // Ambil data yang sudah ditranslate dari Frontend
-    const { 
-      nameEvent, 
-      description_id, 
-      description_en, 
-      location_id, 
-      location_en, 
-      startdate, 
-      enddate 
+    const {
+      nameEvent,
+      description_id,
+      description_en,
+      location_id,
+      location_en,
+      startdate,
+      enddate
     } = req.body
-
-    // const [transDesk, transLoc] = await Promise.all([
-    //   translate(description || '', { to: 'en' }),
-    //   translate(location || '', { to: 'en' })
-    // ])
 
     const newEvents = {
       id: req.body.id,
@@ -31,7 +26,8 @@ router.post('/insert', upload.single('foto'), async (req, res) => {
       location_id: location_id,
       location_en: location_en || '',
       startdate: req.body.startdate,
-      enddate: req.body.enddate || null
+      enddate: req.body.enddate || null,
+      link_video: req.body.link_video
     }
     const newEvent = await eventService.createEvent(newEvents)
     res.status(200).json(newEvent)
@@ -62,16 +58,16 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', upload.single('foto'), async (req, res) => {
   try {
     const eventId = parseInt(req.params.id)
-    const updateDataEvent = {...req.body }
+    const updateDataEvent = { ...req.body }
     // Ambil semua field dari req.body
-    // const { 
-    //   nameEvent, 
-    //   description_id, 
-    //   description_en, 
-    //   location_id, 
-    //   location_en, 
-    //   startdate, 
-    //   enddate 
+    // const {
+    //   nameEvent,
+    //   description_id,
+    //   description_en,
+    //   location_id,
+    //   location_en,
+    //   startdate,
+    //   enddate
     // } = req.body
 
     // const updateDataEvent = {
@@ -82,13 +78,16 @@ router.patch('/:id', upload.single('foto'), async (req, res) => {
     //   ...(location_en && { location_en }), // Update lokasi EN dari FE
     //   ...(startdate && { startdate }),
     //   ...(enddate && { enddate }),
-    // } 
+    // }
 
     if (req.file) updateDataEvent.foto = `/uploads/${req.file.filename}`
     if (req.body.startdate) updateDataEvent.startdate = req.body.startdate
     if (req.body.enddate) updateDataEvent.enddate = req.body.enddate
 
-    const updateEvent = await eventService.editEventbyId(eventId, updateDataEvent)
+    const updateEvent = await eventService.editEventbyId(
+      eventId,
+      updateDataEvent
+    )
 
     // const { description_id, location_id } = req.body
 

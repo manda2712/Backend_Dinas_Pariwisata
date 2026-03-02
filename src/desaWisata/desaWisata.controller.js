@@ -5,16 +5,17 @@ const desaService = require('./desaWisata.service')
 
 router.post('/insert', upload.single('foto'), async (req, res) => {
   try {
-    const { 
-      namaDesa_id, 
-      namaDesa_en, 
-      lokasi_id, 
-      lokasi_en, 
-      deskripsi_id, 
-      deskripsi_en, 
-      longitude, 
-      latitude, 
-      jenisDesa 
+    const {
+      namaDesa_id,
+      namaDesa_en,
+      lokasi_id,
+      lokasi_en,
+      deskripsi_id,
+      deskripsi_en,
+      longitude,
+      latitude,
+      jenisDesa,
+      link_video
     } = req.body
 
     const newDesas = {
@@ -28,7 +29,8 @@ router.post('/insert', upload.single('foto'), async (req, res) => {
       foto: req.file ? `/uploads/${req.file.filename}` : null,
       longitude: longitude,
       latitude: latitude,
-      jenisDesa: jenisDesa
+      jenisDesa: jenisDesa,
+      link_video: link_video
     }
     const newDesa = await desaService.createDesa(newDesas)
     res.status(201).json(newDesa)
@@ -66,7 +68,7 @@ router.patch('/:id', upload.single('foto'), async (req, res) => {
     if (req.body.longitude) updateData.longitude = req.body.longitude
     if (req.body.latitude) updateData.latitude = req.body.latitude
     if (req.body.jenisDesa) updateData.jenisDesa = req.body.jenisDesa
-
+    if (req.body.link_video) updateData.link_video = req.body.link_video
     const updateDesa = await desaService.editDesaById(desaWisataId, updateData)
     res.status(200).json(updateDesa)
   } catch (error) {

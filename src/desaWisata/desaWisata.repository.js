@@ -12,7 +12,8 @@ async function insertDesa (desaWisata) {
       foto: desaWisata.foto,
       longitude: desaWisata.longitude,
       latitude: desaWisata.latitude,
-      jenisDesa: desaWisata.jenisDesa
+      jenisDesa: desaWisata.jenisDesa,
+      link_video: desaWisata.link_video
     }
   })
   return newDesa
@@ -31,7 +32,8 @@ async function findDesa () {
       foto: true,
       longitude: true,
       latitude: true,
-      jenisDesa: true
+      jenisDesa: true,
+      link_video: true
     }
   })
   return desa
@@ -63,9 +65,9 @@ async function editDesa (id, desaWisata) {
       ...(desaWisata.longitude && { longitude: desaWisata.longitude }),
       ...(desaWisata.latitude && { latitude: desaWisata.latitude }),
       ...(desaWisata.jenisDesa && { jenisDesa: desaWisata.jenisDesa }),
-
+      ...(desaWisata.link_video && { link_video: desaWisata.link_video }),
       // PERBAIKAN: Tambahkan update foto jika ada file baru yang diupload
-      ...(desaWisata.foto && { foto: desaWisata.foto }),
+      ...(desaWisata.foto && { foto: desaWisata.foto })
     }
   })
   return updateDesa

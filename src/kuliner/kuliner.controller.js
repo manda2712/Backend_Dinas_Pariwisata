@@ -6,26 +6,16 @@ const { translate } = require('@vitalets/google-translate-api')
 
 router.post('/insert', upload.single('foto'), async (req, res) => {
   try {
-    // 1. Tangkap semua data dari req.body yang sudah dikirim FE (termasuk hasil translate)
-    const { 
-      nama_makanan, 
-      lokasi, 
-      deskripsi_id, 
-      deskripsi_en 
-    } = req.body
-    // // 2. Terjemahkan deskripsi ke Inggris secara otomatis
-    // const [transDeskripsi] = await Promise.all([
-    //   translate(deskripsi || '', { to: 'en' })
-    // ])
-
+    const { nama_makanan, lokasi, deskripsi_id, deskripsi_en, link_video } =
+      req.body
     const newKuliners = {
       nama_makanan: nama_makanan,
       lokasi: lokasi,
       foto: req.file ? `/uploads/${req.file.filename}` : '',
       deskripsi_id: deskripsi_id || '',
-      deskripsi_en: deskripsi_en || '' // Mengambil hasil translate dari Frontend
+      deskripsi_en: deskripsi_en || '',
+      link_video: link_video
     }
-
     const newKuliner = await kulinerService.createKuliner(newKuliners)
     res.status(200).json(newKuliner)
   } catch (error) {
@@ -56,26 +46,22 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', upload.single('foto'), async (req, res) => {
   try {
     const kulinerId = parseInt(req.params.id)
-    const { 
-      nama_makanan, 
-      lokasi, 
-      deskripsi_id, 
-      deskripsi_en 
-    } = req.body
+    const { nama_makanan, lokasi, deskripsi_id, deskripsi_en } = req.body
     const updateDataKuliner = {}
-    // const { deskripsi_id, nama_makanan, lokasi } = req.body
-
-    // Masukkan data hanya jika dikirim oleh Frontend
-    if (nama_makanan !== undefined) updateDataKuliner.nama_makanan = nama_makanan
+    if (nama_makanan !== undefined)
+      updateDataKuliner.nama_makanan = nama_makanan
     if (lokasi !== undefined) updateDataKuliner.lokasi = lokasi
-    if (deskripsi_id !== undefined) updateDataKuliner.deskripsi_id = deskripsi_id
-    if (deskripsi_en !== undefined) updateDataKuliner.deskripsi_en = deskripsi_en
+    if (link_video !== undefined) updateDataKuliner.link_video = link_video
+    if (deskripsi_id !== undefined)
+      updateDataKuliner.deskripsi_id = deskripsi_id
+    if (deskripsi_en !== undefined)
+      updateDataKuliner.deskripsi_en = deskripsi_en
     if (req.file) updateDataKuliner.foto = `/uploads/${req.file.filename}`
 
-        const updateKuliner = await kulinerService.updateKuliner(
-          kulinerId,
-          updateDataKuliner
-        )
+    const updateKuliner = await kulinerService.updateKuliner(
+      kulinerId,
+      updateDataKuliner
+    )
 
     res.status(200).json(updateKuliner)
   } catch (error) {

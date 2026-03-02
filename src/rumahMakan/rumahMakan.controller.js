@@ -9,6 +9,7 @@ router.post('/insert', upload.single('foto'), async (req, res) => {
       resto: req.body.resto,
       kulinerId: parseInt(req.body.kulinerId),
       link_gmaps: req.body.link_gmaps,
+      link_video: req.body.link_video
     }
     const newRumahMakan = await rumahMakanService.createRumahMakan(
       newRumahMakans
@@ -44,6 +45,7 @@ router.patch('/:id', upload.single('foto'), async (req, res) => {
       ...(req.body.resto && { resto: req.body.resto }),
       ...(req.body.kulinerId && { kulinerId: Number(req.body.kulinerId) }),
       ...(req.body.link_gmaps && { link_gmaps: req.body.link_gmaps }),
+      ...(req.body.link_video && { link_video: req.body.link_video })
     }
     const updateRumahMakan = await rumahMakanService.updateRumahMakanById(
       rumahMakanId,

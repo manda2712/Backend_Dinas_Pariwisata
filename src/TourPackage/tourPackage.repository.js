@@ -11,7 +11,8 @@ async function insertTourPackage (tourPackage) {
       kontak: tourPackage.kontak,
       media: tourPackage.media,
       lokasi_id: tourPackage.lokasi_id,
-      lokasi_en: tourPackage.lokasi_en
+      lokasi_en: tourPackage.lokasi_en,
+      link_video: tourPackage.link_video
     }
   })
   return newTourPackge
@@ -29,7 +30,8 @@ async function findTourPacakage () {
       kontak: true,
       media: true,
       lokasi_id: true,
-      lokasi_en: true
+      lokasi_en: true,
+      link_video: true
     }
   })
   return tourPackage
@@ -50,15 +52,24 @@ async function editTourPackage (id, tourPackage) {
       id: parseInt(id)
     },
     data: {
-      ...(tourPackage.nama_wisata_id && {nama_wisata_id: tourPackage.nama_wisata_id}),
-      ...(tourPackage.nama_wisata_en && {nama_wisata_en: tourPackage.nama_wisata_en}),
-      ...(tourPackage.harga && {harga: tourPackage.harga}),
-      ...(tourPackage.deskripsi_id && {deskripsi_id: tourPackage.deskripsi_id}),
-      ...(tourPackage.deskripsi_en && {deskripsi_en: tourPackage.deskripsi_en}),
-      ...(tourPackage.kontak && {kontak: tourPackage.kontak}),
-      ...(tourPackage.media && {media: tourPackage.media}),
+      ...(tourPackage.nama_wisata_id && {
+        nama_wisata_id: tourPackage.nama_wisata_id
+      }),
+      ...(tourPackage.nama_wisata_en && {
+        nama_wisata_en: tourPackage.nama_wisata_en
+      }),
+      ...(tourPackage.harga && { harga: tourPackage.harga }),
+      ...(tourPackage.deskripsi_id && {
+        deskripsi_id: tourPackage.deskripsi_id
+      }),
+      ...(tourPackage.deskripsi_en && {
+        deskripsi_en: tourPackage.deskripsi_en
+      }),
+      ...(tourPackage.kontak && { kontak: tourPackage.kontak }),
+      ...(tourPackage.media && { media: tourPackage.media }),
       ...(tourPackage.lokasi_id && { lokasi_id: tourPackage.lokasi_id }),
-      ...(tourPackage.lokasi_en && { lokasi_en: tourPackage.lokasi_en })
+      ...(tourPackage.lokasi_en && { lokasi_en: tourPackage.lokasi_en }),
+      ...(tourPackage.link_video && { link_video: tourPackage.link_video })
     }
   })
   return updateTourPackage
@@ -77,5 +88,5 @@ module.exports = {
   findTourPacakage,
   findTourPacakageById,
   editTourPackage,
-  deleteTourPackage,
+  deleteTourPackage
 }

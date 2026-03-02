@@ -6,6 +6,7 @@ async function insertRumahMakan (rumahMakan) {
       resto: rumahMakan.resto,
       link_gmaps: rumahMakan.link_gmaps,
       kulinerId: rumahMakan.kulinerId,
+      link_video: rumahMakan.link_video
     },
     include: {
       kuliner: {
@@ -25,6 +26,7 @@ async function findRumahMakan () {
       resto: true,
       link_gmaps: true,
       kulinerId: true,
+      link_video: true,
       kuliner: {
         select: {
           nama_makanan: true
@@ -60,6 +62,7 @@ async function editRumahMakan (id, rumahMakan) {
       resto: rumahMakan.resto,
       link_gmaps: rumahMakan.link_gmaps,
       kulinerId: rumahMakan.kulinerId,
+      link_video: rumahMakan.link_video
     },
     include: {
       kuliner: {

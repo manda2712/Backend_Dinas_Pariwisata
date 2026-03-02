@@ -28,7 +28,7 @@ enum Role {
 }
 
 model TourPackage {
-  id             Int    @id @default(autoincrement())
+  id             Int     @id @default(autoincrement())
   nama_wisata_id String
   nama_wisata_en String
   harga          String
@@ -38,6 +38,7 @@ model TourPackage {
   media          String
   lokasi_id      String
   lokasi_en      String
+  link_video     String?
 }
 
 model Ulasan {
@@ -58,6 +59,7 @@ model Event {
   foto           String
   startdate      DateTime
   enddate        DateTime
+  link_video     String?
 }
 
 model desaWisata {
@@ -73,6 +75,7 @@ model desaWisata {
   latitude     String
   jenisDesa    JenisDesa
   jarak        jarakDesa[]
+  link_video   String?
 }
 
 model jarakDesa {
@@ -103,6 +106,7 @@ model Kuliner {
   deskripsi_en String
   lokasi       String
   rumahMakans  RumahMakan[]
+  link_video   String?
 }
 
 model RumahMakan {
@@ -111,6 +115,7 @@ model RumahMakan {
   kulinerId  Int
   link_gmaps String
   kuliner    Kuliner @relation(fields: [kulinerId], references: [id], onDelete: Cascade)
+  link_video String?
 }
 
 model Hotel {
@@ -124,6 +129,7 @@ model Hotel {
   website            String?
   link_gmaps         String
   lokasi             String
+  link_video         String?
 }
 
 model Visitor {

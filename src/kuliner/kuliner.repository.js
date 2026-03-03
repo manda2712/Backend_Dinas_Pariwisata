@@ -1,4 +1,6 @@
 const prisma = require('../db')
+const fs = require('fs')
+const path = require('path')
 
 async function insertKuliner (kuliner) {
   const newKuliner = await prisma.kuliner.create({
@@ -49,10 +51,35 @@ async function editKuliner (id, kuliner) {
       ...(kuliner.deskripsi_id && { deskripsi_id: kuliner.deskripsi_id }),
       ...(kuliner.deskripsi_en && { deskripsi_en: kuliner.deskripsi_en }),
       ...(kuliner.lokasi && { lokasi: kuliner.lokasi }),
-      ...(kuliner.link_video && { link_video: kuliner.link_video })
+      ...(kuliner.link_video !== undefined && {
+        link_video: kuliner.link_video
+      })
     }
   })
   return updateKuliner
+}
+
+async function deleteFotoKuliner (id) {
+  const kuliner = await prisma.kuliner.findUnique({
+    where: { id: parseInt(id) },
+    select: { foto: true }
+  })
+
+  if (kuliner && kuliner.foto) {
+    const fileName = kuliner.foto.replace('/uploads/', '')
+    const filePath = path.join(__dirname, '../public/uploads', fileName)
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath)
+    }
+  }
+
+  return await prisma.kuliner.update({
+    where: { id: parseInt(id) },
+    data: {
+      foto: ''
+    }
+  })
 }
 
 async function deleteKulinerById (id) {
@@ -70,6 +97,7 @@ module.exports = {
   findKuliner,
   findKulinerById,
   editKuliner,
+  deleteFotoKuliner,
   deleteAllKuliner,
   deleteKulinerById
 }

@@ -1,4 +1,6 @@
 const prisma = require('../db')
+const fs = require('fs') // Tambahkan ini
+const path = require('path') // Tambahkan ini
 
 async function insertTourPackage (tourPackage) {
   const newTourPackge = await prisma.tourPackage.create({
@@ -69,10 +71,34 @@ async function editTourPackage (id, tourPackage) {
       ...(tourPackage.media && { media: tourPackage.media }),
       ...(tourPackage.lokasi_id && { lokasi_id: tourPackage.lokasi_id }),
       ...(tourPackage.lokasi_en && { lokasi_en: tourPackage.lokasi_en }),
-      ...(tourPackage.link_video && { link_video: tourPackage.link_video })
+      ...(tourPackage.link_video !== undefined && {
+        link_video: tourPackage.link_video
+      })
     }
   })
   return updateTourPackage
+}
+
+async function deleteMedia (id) {
+  const tourPackge = await prisma.tourPackage.findUnique({
+    where: { id: parseInt(id) },
+    select: { media: true }
+  })
+
+  if (tourPackge && tourPackge.media) {
+    const fileName = tourPackge.media.replace('/uploads/', '')
+    const filePath = path.join(__dirname, '../public/uploads', fileName)
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath)
+    }
+  }
+
+  return await prisma.tourPackage.update({
+    where: { id: parseInt(id) },
+    data: {
+      media: ''
+    }
+  })
 }
 
 async function deleteTourPackage (id) {
@@ -88,5 +114,6 @@ module.exports = {
   findTourPacakage,
   findTourPacakageById,
   editTourPackage,
+  deleteMedia,
   deleteTourPackage
 }

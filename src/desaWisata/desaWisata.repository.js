@@ -1,6 +1,6 @@
 const prisma = require('../db')
-const fs = require('fs') // Tambahkan ini
-const path = require('path') // Tambahkan ini
+const fs = require('fs')
+const path = require('path')
 
 async function insertDesa (desaWisata) {
   const newDesa = await prisma.desaWisata.create({
@@ -30,7 +30,7 @@ async function findDesa () {
       lokasi_id: true,
       lokasi_en: true,
       deskripsi_id: true,
-      deskripsi_en: true, //2
+      deskripsi_en: true,
       foto: true,
       longitude: true,
       latitude: true,
@@ -56,21 +56,18 @@ async function editDesa (id, desaWisata) {
       id: parseInt(id)
     },
     data: {
-      // Gunakan pengecekan agar hanya kolom yang dikirim saja yang diupdate
       ...(desaWisata.namaDesa_id && { namaDesa_id: desaWisata.namaDesa_id }),
       ...(desaWisata.namaDesa_en && { namaDesa_en: desaWisata.namaDesa_en }),
       ...(desaWisata.lokasi_id && { lokasi_id: desaWisata.lokasi_id }),
       ...(desaWisata.lokasi_en && { lokasi_en: desaWisata.lokasi_en }),
       ...(desaWisata.deskripsi_id && { deskripsi_id: desaWisata.deskripsi_id }),
-      ...(desaWisata.deskripsi_en && { deskripsi_en: desaWisata.deskripsi_en }), //3
-      // PERBAIKAN: Tambahkan pengecekan untuk field lainnya agar tidak null secara tidak sengaja
+      ...(desaWisata.deskripsi_en && { deskripsi_en: desaWisata.deskripsi_en }),
       ...(desaWisata.longitude && { longitude: desaWisata.longitude }),
       ...(desaWisata.latitude && { latitude: desaWisata.latitude }),
       ...(desaWisata.jenisDesa && { jenisDesa: desaWisata.jenisDesa }),
       ...(desaWisata.link_video !== undefined && {
         link_video: desaWisata.link_video
       }),
-      // PERBAIKAN: Tambahkan update foto jika ada file baru yang diupload
       ...(desaWisata.foto && { foto: desaWisata.foto })
     }
   })

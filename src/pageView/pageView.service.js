@@ -1,10 +1,6 @@
 const pageViewRepo = require('./pageView.repository')
 const prisma = require('../db')
 
-/**
- * Catat page view baru
- * visitor boleh berkali-kali (setiap buka page = 1 row)
- */
 async function registerPageView (visitorId, page) {
   const visitor = await prisma.visitor.findUnique({
     where: { uid: visitorId }
@@ -17,15 +13,9 @@ async function registerPageView (visitorId, page) {
   return pageViewRepo.createPageView({ visitorId, page })
 }
 
-/**
- * SUMMARY DASHBOARD
- * - visitors  = unique visitor
- * - visits    = total page views
- */
 async function getPageViewSummary () {
   const now = new Date()
 
-  // ===== DATE RANGE =====
   const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const startYesterday = new Date(startToday)
   startYesterday.setDate(startYesterday.getDate() - 1)
@@ -91,9 +81,6 @@ async function getPageViewSummary () {
   }
 }
 
-/**
- * Data chart
- */
 async function getPageViewChart (filter = 'daily') {
   return pageViewRepo.getPageViewsGrouped(filter)
 }

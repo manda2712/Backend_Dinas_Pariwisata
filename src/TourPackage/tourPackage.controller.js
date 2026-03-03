@@ -82,6 +82,22 @@ router.patch('/:id', upload.single('media'), async (req, res) => {
   }
 })
 
+router.delete('/media/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    await tourPackageService.removeMedia(id)
+
+    res.status(200).send({
+      message: 'Media yang diupload berhasil dihapus'
+    })
+  } catch (error) {
+    res.status(400).send({
+      message: error.message
+    })
+  }
+})
+
 // router.delete('/deleteAll', async (req, res) => {
 //   try {
 //     const result = await tourPackageService.deleteAllTourPackageService()

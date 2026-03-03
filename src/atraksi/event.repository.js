@@ -1,6 +1,6 @@
 const prisma = require('../db')
-const fs = require('fs') // Tambahkan ini
-const path = require('path') // Tambahkan ini
+const fs = require('fs')
+const path = require('path')
 
 async function insertEvent (event) {
   const newEvent = await prisma.event.create({
@@ -49,7 +49,7 @@ async function findEventById (id) {
 async function editEvent (id, event) {
   const updateEvent = await prisma.event.update({
     where: {
-      id: parseInt(id) // ✅ konversi biar sesuai tipe Prisma
+      id: parseInt(id)
     },
     data: {
       ...(event.nameEvent && { nameEvent: event.nameEvent }),
@@ -81,12 +81,10 @@ async function deleteFotoFile (id) {
       fs.unlinkSync(filePath)
     }
   }
-
-  // UBAH null MENJADI '' (string kosong)
   return await prisma.event.update({
     where: { id: parseInt(id) },
     data: {
-      foto: '' // Karena skema kamu tidak boleh null (Required String)
+      foto: ''
     }
   })
 }

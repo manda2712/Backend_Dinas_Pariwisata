@@ -1,9 +1,4 @@
 const prisma = require('../db')
-
-/**
- * Simpan page view
- * NOTE: validasi visitor dilakukan di SERVICE
- */
 async function createPageView (data) {
   return prisma.pageView.create({
     data: {

@@ -46,7 +46,8 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', upload.single('foto'), async (req, res) => {
   try {
     const kulinerId = parseInt(req.params.id)
-    const { nama_makanan, lokasi, deskripsi_id, deskripsi_en, link_video   } = req.body
+    const { nama_makanan, lokasi, deskripsi_id, deskripsi_en, link_video } =
+      req.body
     const updateDataKuliner = {}
     if (nama_makanan !== undefined)
       updateDataKuliner.nama_makanan = nama_makanan
@@ -66,6 +67,21 @@ router.patch('/:id', upload.single('foto'), async (req, res) => {
     res.status(200).json(updateKuliner)
   } catch (error) {
     res.status(400).send(error.message)
+  }
+})
+
+router.delete('/foto/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    await kulinerService.removeKulinerFoto(id)
+    res.status(200).send({
+      message: 'File foto telah berhasil dihapus'
+    })
+  } catch (error) {
+    res.status(400).send({
+      message: error.message
+    })
   }
 })
 

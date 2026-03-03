@@ -24,6 +24,14 @@ async function updateKuliner (id, kuliner) {
   return updateKuliner
 }
 
+async function removeKulinerFoto (id) {
+  const kuliner = await getKulinerById(id)
+  if (!kuliner.foto || kuliner.foto === '') {
+    throw new Error('Tidak ada foto untuk dihapus pada kuliner ini')
+  }
+  return await kulinerRepository.deleteFotoKuliner(id)
+}
+
 async function removeAllKuliner () {
   await kulinerRepository.deleteAllKuliner({})
 }
@@ -38,6 +46,7 @@ module.exports = {
   getAllKuliner,
   getKulinerById,
   updateKuliner,
+  removeKulinerFoto,
   removeAllKuliner,
   removeKulinerById
 }

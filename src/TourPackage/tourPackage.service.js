@@ -32,6 +32,13 @@ async function editTourPackageById (id, tourPackage) {
   return updateTourPackage
 }
 
+async function removeMedia (id) {
+  const tourPackage = await getTourPackageById(id)
+  if (!tourPackage.media || tourPackage.media === '') {
+    throw new Error('Tidak ada foto yang perlu dihapus')
+  }
+  return await deleteTourPackage(id)
+}
 
 async function deleteTourPackageById (id) {
   await getTourPackageById(id)
@@ -47,6 +54,7 @@ module.exports = {
   createTourPackage,
   getAllTourPackage,
   getTourPackageById,
+  removeMedia,
   editTourPackageById,
   deleteTourPackageById,
   deleteAllTourPackageService

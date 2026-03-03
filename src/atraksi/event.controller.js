@@ -1,12 +1,10 @@
 const express = require('express')
 const upload = require('../middleware/upload.middleware')
 const eventService = require('./event.service')
-// const { translate } = require('@vital/ets/google-translate-api')
 const router = express.Router()
 
 router.post('/insert', upload.single('foto'), async (req, res) => {
   try {
-    // Ambil data yang sudah ditranslate dari Frontend
     const {
       nameEvent,
       description_id,
@@ -78,10 +76,7 @@ router.patch('/:id', upload.single('foto'), async (req, res) => {
 router.delete('/foto/:id', async (req, res) => {
   try {
     const { id } = req.params
-
-    // TAMBAHKAN 'eventService.' di depan nama fungsi
     await eventService.removeEventFoto(id)
-
     res.status(200).send({
       message: 'File foto di server dan database berhasil dihapus'
     })

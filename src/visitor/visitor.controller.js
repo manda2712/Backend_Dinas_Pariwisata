@@ -2,10 +2,6 @@ const express = require('express')
 const router = express.Router()
 const visitorService = require('./visitor.service')
 
-/**
- * POST /api/visitors
- * Register visitor baru
- */
 router.post('/', async (req, res) => {
   try {
     const { uid } = req.body
@@ -24,10 +20,6 @@ router.post('/', async (req, res) => {
   }
 })
 
-/**
- * GET /api/visitors/summary?filter=daily|monthly|yearly
- * Ambil summary visitor & page view
- */
 router.get('/summary', async (req, res) => {
   try {
     const { filter = 'daily' } = req.query
@@ -39,10 +31,6 @@ router.get('/summary', async (req, res) => {
   }
 })
 
-/**
- * GET /api/visitors/chart?filter=daily|monthly|yearly
- * Ambil data chart page views
- */
 router.get('/chart', async (req, res) => {
   try {
     const { filter = 'daily' } = req.query

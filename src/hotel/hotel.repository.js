@@ -1,4 +1,6 @@
 const prisma = require('../db')
+const fs = require('fs')
+const path = require('path')
 
 async function insertHotel (hotel) {
   const newHotel = await prisma.hotel.create({
@@ -82,7 +84,7 @@ async function deleteFotoFile (id) {
   })
 
   if (dataHotel && dataHotel.foto) {
-    const fileName = desa.foto.replace('/uploads/', '')
+    const fileName = dataHotel.foto.replace('/uploads/', '')
     const filePath = path.join(__dirname, '../public/uploads', fileName)
 
     if (fs.existsSync(filePath)) {

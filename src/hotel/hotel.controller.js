@@ -100,7 +100,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const hotel = req.params.id
     await hotelService.removeHotelById(hotel)
-    res.status(200).json({ message: 'Kuliner berhasil dihapus' })
+    res.status(200).json({ message: 'Hotel berhasil dihapus' })
   } catch (error) {
     res.status(500).send(error.message)
   }

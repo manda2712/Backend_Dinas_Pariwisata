@@ -28,10 +28,11 @@ async function getDesaId (id) {
 async function removeDesaFoto (id) {
   const desa = await getDesaId(id)
   if (!desa.foto || desa.foto === '') {
-    throw new Error('Tidak ada foto untuk dihapus pada event ini')
+    throw new Error('Tidak ada foto untuk dihapus pada desa ini')
   }
   return await deleteFotoFile(id)
 }
+
 
 async function editDesaById (id, desa) {
   await getDesaId(id)

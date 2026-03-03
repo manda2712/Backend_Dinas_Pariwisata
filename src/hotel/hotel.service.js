@@ -1,4 +1,4 @@
-const { deleteFotoFile } = require('../atraksi/event.repository')
+const { deleteFotoFile } = require('./hotel.repository')
 const hotelRepository = require('./hotel.repository')
 
 async function createHotel (listHotel) {
@@ -30,7 +30,7 @@ async function removeHotelFoto (id) {
   if (!hotel.foto || hotel.foto === '') {
     throw new Error('Tidak ada foto untuk dihapus pada event ini')
   }
-  return await deleteFotoFile
+  return await deleteFotoFile(id)
 }
 
 async function removeAllHotel () {

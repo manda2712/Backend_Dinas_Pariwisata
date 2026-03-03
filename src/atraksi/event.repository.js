@@ -1,4 +1,6 @@
 const prisma = require('../db')
+const fs = require('fs') // Tambahkan ini
+const path = require('path') // Tambahkan ini
 
 async function insertEvent (event) {
   const newEvent = await prisma.event.create({
@@ -29,7 +31,7 @@ async function findEvent () {
       foto: true,
       startdate: true,
       enddate: true,
-      link_video: true,
+      link_video: true
     }
   })
   return event
@@ -41,7 +43,7 @@ async function findEventById (id) {
       id: parseInt(id)
     }
   })
-  return { event }
+  return event
 }
 
 async function editEvent (id, event) {
@@ -64,6 +66,31 @@ async function editEvent (id, event) {
   return updateEvent
 }
 
+async function deleteFotoFile (id) {
+  const event = await prisma.event.findUnique({
+    where: { id: parseInt(id) },
+    select: { foto: true }
+  })
+
+  if (event && event.foto) {
+    // Pastikan path folder benar. Sesuaikan '../public/uploads' dengan folder kamu
+    const fileName = event.foto.replace('/uploads/', '')
+    const filePath = path.join(__dirname, '../public/uploads', fileName)
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath)
+    }
+  }
+
+  // UBAH null MENJADI '' (string kosong)
+  return await prisma.event.update({
+    where: { id: parseInt(id) },
+    data: {
+      foto: '' // Karena skema kamu tidak boleh null (Required String)
+    }
+  })
+}
+
 async function deleteEvent (id) {
   await prisma.event.delete({
     where: {
@@ -77,5 +104,6 @@ module.exports = {
   findEvent,
   findEventById,
   editEvent,
+  deleteFotoFile,
   deleteEvent
 }

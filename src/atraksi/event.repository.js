@@ -60,7 +60,7 @@ async function editEvent (id, event) {
       ...(event.foto && { foto: event.foto }),
       ...(event.startdate && { startdate: new Date(event.startdate) }),
       ...(event.enddate && { enddate: new Date(event.enddate) }),
-      ...(event.link_video && { link_video: event.link_video })
+      ...(event.link_video !== undefined && { link_video: event.link_video })
     }
   })
   return updateEvent

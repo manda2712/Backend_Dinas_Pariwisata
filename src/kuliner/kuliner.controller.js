@@ -46,7 +46,7 @@ router.get('/:id', async (req, res) => {
 router.patch('/:id', upload.single('foto'), async (req, res) => {
   try {
     const kulinerId = parseInt(req.params.id)
-    const { nama_makanan, lokasi, deskripsi_id, deskripsi_en } = req.body
+    const { nama_makanan, lokasi, deskripsi_id, deskripsi_en, link_video   } = req.body
     const updateDataKuliner = {}
     if (nama_makanan !== undefined)
       updateDataKuliner.nama_makanan = nama_makanan

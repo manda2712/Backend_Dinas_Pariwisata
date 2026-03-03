@@ -29,7 +29,7 @@ async function findEvent () {
       foto: true,
       startdate: true,
       enddate: true,
-      link_video: link_video
+      link_video: true,
     }
   })
   return event

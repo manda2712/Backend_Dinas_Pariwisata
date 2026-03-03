@@ -71,7 +71,7 @@ router.patch('/:id', upload.single('media'), async (req, res) => {
     if (req.file) updateDataPackage.media = `/uploads/${req.file.filename}`
     if (req.body.harga) updateDataPackage.harga = req.body.harga
     if (req.body.kontak) updateDataPackage.kontak = req.body.kontak
-    if (req.body.link_video) updateDataPackage.kontak = req.body.link_video
+    if (req.body.link_video) updateDataPackage.link_video = req.body.link_video
     const updateTourPackage = await tourPackageService.editTourPackageById(
       tourPackageId,
       updateDataPackage

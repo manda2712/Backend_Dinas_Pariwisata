@@ -12,7 +12,7 @@ async function insertJarak (jarakDesa) {
     include: {
       desa: {
         select: {
-          namaDesa: true
+          namaDesa_id: true
         }
       }
     }
@@ -27,7 +27,7 @@ async function findJarak () {
       desaId: true,
       desa: {
         select: {
-          namaDesa: true
+          namaDesa_id: true
         }
       },
       titikKota: true,
@@ -49,7 +49,7 @@ async function findJarakById (id) {
       desaId: true,
       desa: {
         select: {
-          namaDesa: true
+          namaDesa_id: true
         }
       },
       titikKota: true,

@@ -32,6 +32,7 @@ async function editTourPackageById (id, tourPackage) {
   return updateTourPackage
 }
 
+
 async function deleteTourPackageById (id) {
   await getTourPackageById(id)
   await deleteTourPackage(id)

@@ -26,7 +26,7 @@ router.post('/insert', upload.single('foto'), async (req, res) => {
       lokasi_en: lokasi_en || '',
       deskripsi_id: deskripsi_id,
       deskripsi_en: deskripsi_en || '',
-      foto: req.file ? `/uploads/${req.file.filename}` : null,
+      foto: req.file ? `/uploads/${req.file.filename}` : "",
       longitude: longitude,
       latitude: latitude,
       jenisDesa: jenisDesa,

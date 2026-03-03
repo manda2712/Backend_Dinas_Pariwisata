@@ -65,7 +65,7 @@ async function editHotel (id, hotel) {
       website: hotel.website,
       link_gmaps: hotel.link_gmaps,
       lokasi: hotel.lokasi,
-      link_video: link_video
+      link_video: hotel.link_video
     }
   })
   return updateHotel

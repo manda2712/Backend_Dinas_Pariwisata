@@ -2,7 +2,6 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const path = require('path')
-// langsung set tanpa .env
 app.use(express.json())
 const PORT = 3000
 app.use(cors())

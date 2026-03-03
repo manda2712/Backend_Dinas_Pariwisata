@@ -54,18 +54,18 @@ async function editHotel (id, hotel) {
       id: parseInt(id)
     },
     data: {
-      nama_hotel: hotel.nama_hotel,
-      foto: hotel.foto,
-      telepon: hotel.telepon,
-      alamat: hotel.alamat,
-      deskripsi: hotel.deskripsi,
-      jumlah_kamar: hotel.jumlah_kamar,
-      jumlah_tempatTidur: hotel.jumlah_tempatTidur,
-      harga: hotel.harga,
-      website: hotel.website,
-      link_gmaps: hotel.link_gmaps,
-      lokasi: hotel.lokasi,
-      link_video: hotel.link_video
+      ...(hotel.nama_hotel && { nama_hotel: hotel.nama_hotel }),
+      ...(hotel.foto && { foto: hotel.foto }),
+      ...(hotel.telepon && { telepon: hotel.telepon }),
+      ...(hotel.jumlah_kamar && { jumlah_kamar: hotel.jumlah_kamar }),
+      ...(hotel.jumlah_tempatTidur && {
+        jumlah_tempatTidur: hotel.jumlah_tempatTidur
+      }),
+      ...(hotel.harga && { harga: hotel.harga }),
+      ...(hotel.website && { website: hotel.website }),
+      ...(hotel.link_gmaps && { link_gmaps: hotel.link_gmaps }),
+      ...(hotel.lokasi && { lokasi: hotel.lokasi }),
+      ...(hotel.link_video !== undefined && { link_video: hotel.link_video })
     }
   })
   return updateHotel
@@ -73,6 +73,29 @@ async function editHotel (id, hotel) {
 
 async function deleteAllHotel () {
   return await prisma.hotel.deleteMany({})
+}
+
+async function deleteFotoFile (id) {
+  const dataHotel = await prisma.hotel.findUnique({
+    where: { id: parseInt(id) },
+    select: { foto: true }
+  })
+
+  if (dataHotel && dataHotel.foto) {
+    const fileName = desa.foto.replace('/uploads/', '')
+    const filePath = path.join(__dirname, '../public/uploads', fileName)
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath)
+    }
+  }
+
+  return await prisma.hotel.update({
+    where: { id: parseInt(id) },
+    data: {
+      foto: ''
+    }
+  })
 }
 
 async function deleteHotelById (id) {
@@ -88,6 +111,7 @@ module.exports = {
   findHotel,
   findHotelById,
   editHotel,
+  deleteFotoFile,
   deleteAllHotel,
   deleteHotelById
 }

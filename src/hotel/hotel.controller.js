@@ -1,13 +1,13 @@
-const express = require("express");
-const router = express.Router();
-const upload = require("../middleware/upload.middleware");
-const hotelService = require("./hotel.service");
+const express = require('express')
+const router = express.Router()
+const upload = require('../middleware/upload.middleware')
+const hotelService = require('./hotel.service')
 
-router.post("/insert", upload.single("foto"), async (req, res) => {
+router.post('/insert', upload.single('foto'), async (req, res) => {
   try {
     const newHotels = {
       nama_hotel: req.body.nama_hotel,
-      foto: req.file ? `/uploads/${req.file.filename}` : "",
+      foto: req.file ? `/uploads/${req.file.filename}` : '',
       telepon: req.body.telepon,
       alamat: req.body.alamat,
       deskripsi: req.body.deskripsi,
@@ -17,36 +17,36 @@ router.post("/insert", upload.single("foto"), async (req, res) => {
       website: req.body.website,
       link_gmaps: req.body.link_gmaps,
       lokasi: req.body.lokasi,
-      link_video: req.body.link_video,
-    };
-    const newHotel = await hotelService.createHotel(newHotels);
-    res.status(200).json(newHotel);
+      link_video: req.body.link_video
+    }
+    const newHotel = await hotelService.createHotel(newHotels)
+    res.status(200).json(newHotel)
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
-});
+})
 
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const newHotel = await hotelService.getHotel();
-    res.status(200).json(newHotel);
+    const newHotel = await hotelService.getHotel()
+    res.status(200).json(newHotel)
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
 
-router.get("/:id", async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const hotel = await hotelService.getHotelById(req.params.id);
-    res.status(200).json(hotel);
+    const hotel = await hotelService.getHotelById(req.params.id)
+    res.status(200).json(hotel)
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
-});
+})
 
-router.patch("/:id", upload.single("foto"), async (req, res) => {
+router.patch('/:id', upload.single('foto'), async (req, res) => {
   try {
-    const hotelId = parseInt(req.params.id);
+    const hotelId = parseInt(req.params.id)
     const hotel = {
       ...(req.body.nama_hotel && { nama_hotel: req.body.nama_hotel }),
       ...(req.file && { foto: `/uploads/${req.file.filename}` }),
@@ -55,40 +55,55 @@ router.patch("/:id", upload.single("foto"), async (req, res) => {
       ...(req.body.deskripsi && { deskripsi: req.body.deskripsi }),
       ...(req.body.jumlah_kamar && { jumlah_kamar: req.body.jumlah_kamar }),
       ...(req.body.jumlah_tempatTidur && {
-        jumlah_tempatTidur: req.body.jumlah_tempatTidur,
+        jumlah_tempatTidur: req.body.jumlah_tempatTidur
       }),
       ...(req.body.harga && { harga: req.body.harga }),
       ...(req.body.website && { website: req.body.website }),
       ...(req.body.link_gmaps && { link_gmaps: req.body.link_gmaps }),
       ...(req.body.lokasi && { lokasi: req.body.lokasi }),
       ...(req.body.link_video !== undefined && {
-        link_video: req.body.link_video,
-      }),
-    };
-    const updateHotel = await hotelService.updateHotelById(hotelId, hotel);
-    res.status(200).json(updateHotel);
+        link_video: req.body.link_video
+      })
+    }
+    const updateHotel = await hotelService.updateHotelById(hotelId, hotel)
+    res.status(200).json(updateHotel)
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
 
-router.delete("/all", async (req, res) => {
+router.delete('/all', async (req, res) => {
   try {
-    await hotelService.removeAllHotel();
-    res.status(200).json({ message: "Semua daftar hotel berhasil dihapus" });
+    await hotelService.removeAllHotel()
+    res.status(200).json({ message: 'Semua daftar hotel berhasil dihapus' })
   } catch (error) {
-    res.status(200).json(error.message);
+    res.status(200).json(error.message)
   }
-});
+})
 
-router.delete("/:id", async (req, res) => {
+router.delete('/foto/:id', async (req, res) => {
   try {
-    const hotel = req.params.id;
-    await hotelService.removeHotelById(hotel);
-    res.status(200).json({ message: "Kuliner berhasil dihapus" });
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
+    const { id } = req.params
 
-module.exports = router;
+    await hotelService.removeHotelFoto(id)
+    res.status(200).send({
+      message: 'File foto di server dan database berhasil dihapus'
+    })
+  } catch (error) {
+    res.status(400).send({
+      message: error.message
+    })
+  }
+})
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const hotel = req.params.id
+    await hotelService.removeHotelById(hotel)
+    res.status(200).json({ message: 'Kuliner berhasil dihapus' })
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+module.exports = router

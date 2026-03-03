@@ -1,4 +1,6 @@
 const prisma = require('../db')
+const fs = require('fs') // Tambahkan ini
+const path = require('path') // Tambahkan ini
 
 async function insertDesa (desaWisata) {
   const newDesa = await prisma.desaWisata.create({
@@ -65,12 +67,37 @@ async function editDesa (id, desaWisata) {
       ...(desaWisata.longitude && { longitude: desaWisata.longitude }),
       ...(desaWisata.latitude && { latitude: desaWisata.latitude }),
       ...(desaWisata.jenisDesa && { jenisDesa: desaWisata.jenisDesa }),
-      ...(desaWisata.link_video && { link_video: desaWisata.link_video }),
+      ...(desaWisata.link_video !== undefined && {
+        link_video: desaWisata.link_video
+      }),
       // PERBAIKAN: Tambahkan update foto jika ada file baru yang diupload
       ...(desaWisata.foto && { foto: desaWisata.foto })
     }
   })
   return updateDesa
+}
+
+async function deleteFotoFile (id) {
+  const desa = await prisma.desaWisata.findUnique({
+    where: { id: parseInt(id) },
+    select: { foto: true }
+  })
+
+  if (desa && desa.foto) {
+    const fileName = desa.foto.replace('/uploads/', '')
+    const filePath = path.join(__dirname, '../public/uploads', fileName)
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath)
+    }
+  }
+
+  return await prisma.desaWisata.update({
+    where: { id: parseInt(id) },
+    data: {
+      foto: ''
+    }
+  })
 }
 
 async function deleteDesa (id) {
@@ -86,5 +113,6 @@ module.exports = {
   findDesa,
   findDesaById,
   editDesa,
+  deleteFotoFile,
   deleteDesa
 }

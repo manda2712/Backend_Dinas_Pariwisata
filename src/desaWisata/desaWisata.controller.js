@@ -26,7 +26,7 @@ router.post('/insert', upload.single('foto'), async (req, res) => {
       lokasi_en: lokasi_en || '',
       deskripsi_id: deskripsi_id,
       deskripsi_en: deskripsi_en || '',
-      foto: req.file ? `/uploads/${req.file.filename}` : "",
+      foto: req.file ? `/uploads/${req.file.filename}` : '',
       longitude: longitude,
       latitude: latitude,
       jenisDesa: jenisDesa,
@@ -73,6 +73,21 @@ router.patch('/:id', upload.single('foto'), async (req, res) => {
     res.status(200).json(updateDesa)
   } catch (error) {
     res.status(400).send(error.message)
+  }
+})
+
+router.delete('/foto/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+
+    await desaService.removeDesaFoto(id)
+    res.status(200).send({
+      message: 'File foto di server dan database berhasil dihapus'
+    })
+  } catch (error) {
+    res.status(400).send({
+      message: error.message
+    })
   }
 })
 

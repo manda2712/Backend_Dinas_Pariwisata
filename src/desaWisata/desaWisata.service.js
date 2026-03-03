@@ -2,6 +2,7 @@ const {
   insertDesa,
   findDesa,
   findDesaById,
+  deleteFotoFile,
   editDesa,
   deleteDesa
 } = require('./desaWisata.repository')
@@ -24,6 +25,14 @@ async function getDesaId (id) {
   return desa
 }
 
+async function removeDesaFoto (id) {
+  const desa = await getDesaId(id)
+  if (!desa.foto || desa.foto === '') {
+    throw new Error('Tidak ada foto untuk dihapus pada event ini')
+  }
+  return await deleteFotoFile(id)
+}
+
 async function editDesaById (id, desa) {
   await getDesaId(id)
   const updateDesa = await editDesa(id, desa)
@@ -40,5 +49,6 @@ module.exports = {
   getAllDesa,
   getDesaId,
   editDesaById,
+  removeDesaFoto,
   deleteDesaById
 }

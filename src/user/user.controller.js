@@ -1,33 +1,8 @@
 const express = require('express')
 const router = express.Router()
-
+// const adminAuth = require('../middleware/adminAuth')
+const superAdmin = require('../middleware/superAdminAuth')
 const adminService = require('./user.service')
-const { admin } = require('../db')
-
-router.post('/register', async (req, res, next) => {
-  const { nama_Lengkap, jenis_kelamin, username, password } = req.body
-  try {
-    const newAdmin = await adminService.register(
-      nama_Lengkap,
-      jenis_kelamin,
-      username,
-      password
-    )
-    res.status(201).json({
-      data: {
-        id: newAdmin.id,
-        nama_Lengkap: newAdmin.nama_Lengkap,
-        jenis_kelamin: newAdmin.jenis_kelamin,
-        username: newAdmin.username,
-        role: newAdmin.role,
-        password
-      },
-      message: 'Registration Succcess'
-    })
-  } catch (error) {
-    res.status(400).json({ error: error.message })
-  }
-})
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body
@@ -40,6 +15,25 @@ router.post('/login', async (req, res) => {
     res.status(200).json({ data: admin, message: 'Login berhasil' })
   } catch (error) {
     res.status(401).json({ error: error.message })
+  }
+})
+
+router.post('/insert', superAdmin, async (req, res) => {
+  try {
+    const user = req.body
+    const newUser = await adminService.insertAdmin(user)
+    res.status(201).json(newUser)
+  } catch (error) {
+    res.status(400).send(error.message)
+  }
+})
+
+router.get('/', superAdmin, async (req, res) => {
+  try {
+    const admin = await adminService.getAllAdmin()
+    res.status(200).json(admin)
+  } catch (error) {
+    res.status(500).send(error.message)
   }
 })
 
@@ -69,6 +63,16 @@ router.patch('/:id', async (req, res) => {
     })
   } catch (error) {
     res.status(500).json({ error: error.message })
+  }
+})
+
+router.delete('/:id', superAdmin, async (req, res) => {
+  try {
+    const adminId = parseInt(req.params.id)
+    await adminService.deleteAdminById(adminId)
+    res.status(200).json({ message: 'User Deleted' })
+  } catch (error) {
+    res.status(400).send(error.message)
   }
 })
 

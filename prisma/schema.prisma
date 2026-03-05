@@ -13,11 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
+model User {
   id            Int    @id @default(autoincrement())
   nama_Lengkap  String
   jenis_kelamin String
-  username      String
+  username      String @unique
   password      String
   role          Role
 }
@@ -25,6 +25,7 @@ model Admin {
 enum Role {
   Admin
   user
+  superAdmin
 }
 
 model TourPackage {

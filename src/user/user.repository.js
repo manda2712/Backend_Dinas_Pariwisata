@@ -1,23 +1,25 @@
 const prisma = require('../db')
 
-async function createAdmin (admin) {
+async function createAdmin (userData) {
   try {
-    const newAdmin = await prisma.admin.create({ data: admin })
+    const newAdmin = await prisma.user.create({ data: userData })
     return newAdmin
   } catch (error) {
-    console.error('error saat regsitrasi user:', error)
+    console.error('error saat registrasi user:', error)
     throw new Error('failed to create user')
   }
 }
 
 async function findAdmin (username) {
-  return await prisma.admin.findFirst({
-    where: { username }
+  return await prisma.user.findFirst({
+    where: {
+      username: username
+    }
   })
 }
 
 async function findAdminById (id) {
-  const admin = await prisma.admin.findUnique({
+  const admin = await prisma.user.findUnique({
     where: {
       id: parseInt(id)
     },
@@ -35,14 +37,14 @@ async function findAdminById (id) {
 
 async function editAdminById (id, data) {
   try {
-    const updatedAdmin = await prisma.admin.update({
+    const updatedAdmin = await prisma.user.update({
       where: { id: parseInt(id) },
-      data,
+      data: data,
       select: {
         id: true,
         username: true,
         nama_Lengkap: true,
-        jenis_kelamin : true,
+        jenis_kelamin: true,
         role: true
       }
     })
@@ -53,4 +55,18 @@ async function editAdminById (id, data) {
   }
 }
 
-module.exports = { createAdmin, findAdmin, findAdminById, editAdminById }
+async function deleteAdmin (id) {
+  await prisma.user.delete({
+    where: {
+      id: parseInt(id)
+    }
+  })
+}
+
+module.exports = {
+  createAdmin,
+  findAdmin,
+  findAdminById,
+  editAdminById,
+  deleteAdmin
+}

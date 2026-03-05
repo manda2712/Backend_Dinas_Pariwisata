@@ -43,6 +43,29 @@ async function login (username, password) {
   return { admin, token }
 }
 
+async function insertAdmin (newData) {
+  // 1. Hash password-nya
+  const hashedPassword = await bcrypt.hash(newData.password, 10)
+
+  // 2. Susun objek data secara eksplisit agar tidak ada yang terlewat
+  const adminData = {
+    nama_Lengkap: newData.nama_Lengkap,
+    jenis_kelamin: newData.jenis_kelamin,
+    username: newData.username,
+    password: hashedPassword,
+    role: newData.role || 'Admin' // <--- Menjamin role ada nilainya
+  }
+
+  // 3. Kirim ke repository
+  const newAdmin = await adminRepository.createAdmin(adminData)
+  return newAdmin
+}
+
+async function getAllAdmin () {
+  const admin = adminRepository.findAdmin()
+  return admin
+}
+
 async function getAdminById (id) {
   const admin = await adminRepository.findAdminById(id)
 
@@ -53,17 +76,38 @@ async function getAdminById (id) {
 }
 
 async function patchAdminById (id, body) {
-  const updateData = { ...body }
+  // 1. Ambil data yang dikirim saja
+  const updateData = {}
 
-  if (updateData.password) {
-    updateData.password = await bcrypt.hash(updateData.password, 10)
+  // 2. Hanya masukkan ke updateData jika field tersebut ada nilainya (tidak undefined)
+  if (body.nama_Lengkap) updateData.nama_Lengkap = body.nama_Lengkap
+  if (body.jenis_kelamin) updateData.jenis_kelamin = body.jenis_kelamin
+  if (body.username) updateData.username = body.username
+  if (body.role) updateData.role = body.role
+
+  // 3. Khusus password, harus di-hash dulu kalau ada perubahan
+  if (body.password) {
+    updateData.password = await bcrypt.hash(body.password, 10)
+  }
+
+  // Jika ternyata body kosong, lempar error
+  if (Object.keys(updateData).length === 0) {
+    throw new Error('Tidak ada data yang diubah')
   }
 
   return await adminRepository.editAdminById(id, updateData)
 }
+
+async function deleteAdminById (id) {
+  await adminRepository.findAdminById(id)
+  await adminRepository.deleteAdmin(id)
+}
 module.exports = {
   register,
   login,
+  insertAdmin,
+  getAllAdmin,
   getAdminById,
+  deleteAdminById,
   patchAdminById
 }

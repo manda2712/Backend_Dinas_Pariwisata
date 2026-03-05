@@ -19,7 +19,7 @@ async function main () {
 
   // 3. Masukkan ke database menggunakan upsert
   const superAdmin = await prisma.user.upsert({
-    where: { username: 'superadmin_dinas_pariwisata' },
+    where: { username: 'superadminPariwsata' },
     update: {
       password: hashedPassword // Update password jika script dijalankan ulang
     },

@@ -36,7 +36,7 @@ model TourPackage {
   deskripsi_id   String
   deskripsi_en   String
   kontak         String
-  media          String
+  media          String?
   lokasi_id      String
   lokasi_en      String
   link_video     String?

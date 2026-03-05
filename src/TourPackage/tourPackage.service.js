@@ -5,8 +5,10 @@ const {
   findTourPacakageById,
   editTourPackage,
   deleteTourPackage,
-  deleteAllTourPackage
+  deleteAllTourPackage,
+  deleteMedia
 } = require('./tourPackage.repository')
+
 
 async function createTourPackage (pacakgeData) {
   const newTourPackge = await insertTourPackage(pacakgeData)
@@ -37,7 +39,7 @@ async function removeMedia (id) {
   if (!tourPackage.media || tourPackage.media === '') {
     throw new Error('Tidak ada foto yang perlu dihapus')
   }
-  return await deleteTourPackage(id)
+  return await deleteMedia(id)
 }
 
 async function deleteTourPackageById (id) {

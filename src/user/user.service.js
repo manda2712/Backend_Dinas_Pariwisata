@@ -62,7 +62,7 @@ async function insertAdmin (newData) {
 }
 
 async function getAllAdmin () {
-  const admin = adminRepository.findAdmin()
+  const admin = await adminRepository.findAllAdmin()
   return admin
 }
 

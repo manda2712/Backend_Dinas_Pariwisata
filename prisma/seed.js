@@ -1,43 +1,44 @@
-const { PrismaClient } = require('@prisma/client')
-const bcrypt = require('bcrypt')
-require('dotenv').config() // Untuk membaca file .env
+const { PrismaClient } = require("@prisma/client");
+const bcrypt = require("bcrypt");
+require("dotenv").config(); // Untuk membaca file .env
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-async function main () {
+async function main() {
   // 1. Ambil password dari .env
-  const rawPassword = process.env.SUPERADMIN_PASSWORD
+  const rawPassword = process.env.SUPERADMIN_PASSWORD;
 
   if (!rawPassword) {
-    throw new Error('Tolong set SUPERADMIN_PASSWORD di file .env Anda!')
+    throw new Error("Tolong set SUPERADMIN_PASSWORD di file .env Anda!");
   }
 
   // 2. Hash password-nya
-  const hashedPassword = await bcrypt.hash(rawPassword, 10)
+  const hashedPassword = await bcrypt.hash(rawPassword, 10);
 
-  console.log('Sedang membuat akun Super Admin...')
+  console.log("Sedang membuat akun Super Admin...");
 
   // 3. Masukkan ke database menggunakan upsert
   const superAdmin = await prisma.user.upsert({
-    where: { username: 'superadminPariwsata' },
+    where: { username: "superadminPariwisata" },
     update: {
-      password: hashedPassword // Update password jika script dijalankan ulang
+      password: hashedPassword, 
     },
     create: {
-      username: 'superadminPariwsata',
+      username: "superadminPariwisata",
       password: hashedPassword,
-      nama_Lengkap: 'Super Admin Dinas Pariwisata',
-      jenis_kelamin: 'Laki-laki',
-      role: 'superAdmin' // Sesuai dengan Enum di schema.prisma Anda
-    }
+      nama_Lengkap: "Super Admin Dinas Pariwisata",
+      jenis_kelamin: "Laki-laki",
+      role: "superAdmin", 
+    },
   })
+  return superAdmin;
 }
 
 main()
-  .catch(e => {
-    console.error('❌ Terjadi kesalahan saat seeding:', e)
-    process.exit(1)
+  .catch((e) => {
+    console.error("❌ Terjadi kesalahan saat seeding:", e);
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect()
-  })
+    await prisma.$disconnect();
+  });

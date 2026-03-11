@@ -1,12 +1,27 @@
 const prisma = require('../db')
 
-async function createAdmin (userData) {
+async function createAdmin(userData) {
   try {
-    const newAdmin = await prisma.user.create({ data: userData })
+
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        username: userData.username
+      }
+    })
+
+    if (existingUser) {
+      throw new Error("Username sudah digunakan")
+    }
+
+    const newAdmin = await prisma.user.create({
+      data: userData
+    })
+
     return newAdmin
+
   } catch (error) {
-    console.error('error saat registrasi user:', error)
-    throw new Error('failed to create user')
+    console.error("error saat registrasi user:", error)
+    throw error
   }
 }
 
@@ -17,6 +32,19 @@ async function findAdmin (username) {
     }
   })
 }
+
+async function findAllAdmin() {
+  return await prisma.user.findMany({
+    select: {
+      id: true,
+      username: true,
+      nama_Lengkap: true,
+      jenis_kelamin: true,
+      role: true
+    }
+  })
+}
+
 
 async function findAdminById (id) {
   const admin = await prisma.user.findUnique({
@@ -35,8 +63,20 @@ async function findAdminById (id) {
   return admin
 }
 
-async function editAdminById (id, data) {
+async function editAdminById(id, data) {
   try {
+
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        username: data.username,
+        NOT: { id: parseInt(id) } // agar user sendiri tidak dianggap duplikat
+      }
+    });
+
+    if (existingUser) {
+      throw new Error("Username sudah digunakan");
+    }
+
     const updatedAdmin = await prisma.user.update({
       where: { id: parseInt(id) },
       data: data,
@@ -47,11 +87,13 @@ async function editAdminById (id, data) {
         jenis_kelamin: true,
         role: true
       }
-    })
-    return updatedAdmin
+    });
+
+    return updatedAdmin;
+
   } catch (error) {
-    console.error('Error saat update admin:', error)
-    throw new Error('failed to update admin')
+    console.error("Error saat update admin:", error);
+    throw error;
   }
 }
 
@@ -66,6 +108,7 @@ async function deleteAdmin (id) {
 module.exports = {
   createAdmin,
   findAdmin,
+  findAllAdmin,
   findAdminById,
   editAdminById,
   deleteAdmin

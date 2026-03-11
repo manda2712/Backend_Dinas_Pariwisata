@@ -1,31 +1,39 @@
-const multer = require('multer')
-const path = require('path')
+const multer = require("multer");
+const path = require("path");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/')
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname))
-  }
-})
-function fileFilter (req, file, cb) {
-  const allowedTypes = /jpeg|jpg|png|gif|mp4|mov|avi|mkv/
-  const extname = allowedTypes.test(
-    path.extname(file.originalname).toLowerCase()
-  )
-  const mimetype = allowedTypes.test(file.mimetype)
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+function fileFilter(req, file, cb) {
+  const allowedExt = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".webp",
+    ".mp4",
+    ".mov",
+    ".avi",
+    ".mkv",
+  ];
 
-  if (extname && mimetype) {
-    cb(null, true)
+  const ext = path.extname(file.originalname).toLowerCase();
+
+  if (allowedExt.includes(ext)) {
+    cb(null, true);
   } else {
-    cb(new Error('Hanya gambar dan video yang diperbolehkan!'))
+    cb(new Error("Format file tidak didukung!"));
   }
 }
 
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 50 * 1024 * 1024 }
-})
+  limits: { fileSize: 50 * 1024 * 1024 },
+});
 
-module.exports = upload
+module.exports = upload;

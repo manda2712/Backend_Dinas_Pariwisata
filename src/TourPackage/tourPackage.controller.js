@@ -1,9 +1,9 @@
-const express = require('express')
-const tourPackageService = require('./tourPackage.service')
-const router = express.Router()
-const upload = require('../middleware/upload.middleware')
+const express = require("express");
+const tourPackageService = require("./tourPackage.service");
+const router = express.Router();
+const upload = require("../middleware/upload.middleware");
 
-router.post('/insert', upload.single('media'), async (req, res) => {
+router.post("/insert", upload.single("media"), async (req, res) => {
   try {
     const {
       nama_wisata_id,
@@ -14,89 +14,90 @@ router.post('/insert', upload.single('media'), async (req, res) => {
       lokasi_en,
       harga,
       link_video,
-      kontak
-    } = req.body
+      kontak,
+    } = req.body;
 
     const newTourPackges = {
       id: req.body.id,
       nama_wisata_id: nama_wisata_id,
-      nama_wisata_en: nama_wisata_en || '',
+      nama_wisata_en: nama_wisata_en || "",
       harga: harga,
       deskripsi_id: deskripsi_id,
-      deskripsi_en: deskripsi_en || '',
+      deskripsi_en: deskripsi_en || "",
       kontak: kontak,
       media: req.file ? `/uploads/${req.file.filename}` : null,
       lokasi_id: lokasi_id,
-      lokasi_en: lokasi_en || '',
-      link_video: link_video
-    }
-    const newTourPackge = await tourPackageService.createTourPackage(
-      newTourPackges
-    )
-    res.status(201).json(newTourPackge)
+      lokasi_en: lokasi_en || "",
+      link_video: link_video,
+    };
+    const newTourPackge =
+      await tourPackageService.createTourPackage(newTourPackges);
+    console.log(req.body);
+    console.log(req.file);
+    res.status(201).json(newTourPackge);
   } catch (error) {
-    console.error('❌ ERROR:', error)
-    res.status(400).json({ message: error.message })
+    console.error("❌ ERROR:", error);
+    res.status(400).json({ message: error.message });
   }
-})
+});
 
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const tourPackage = await tourPackageService.getAllTourPackage()
-    res.status(200).json(tourPackage)
+    const tourPackage = await tourPackageService.getAllTourPackage();
+    res.status(200).json(tourPackage);
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ message: error.message })
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
-})
+});
 
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const tourPackage = await tourPackageService.getTourPackageById(
-      req.params.id
-    )
-    console.log('Data dari DB:', tourPackage)
-    res.status(200).json(tourPackage)
+      req.params.id,
+    );
+    console.log("Data dari DB:", tourPackage);
+    res.status(200).json(tourPackage);
   } catch (error) {
-    res.status(404).json({ message: error.message })
+    res.status(404).json({ message: error.message });
   }
-})
+});
 
-router.patch('/:id', upload.single('media'), async (req, res) => {
+router.patch("/:id", upload.single("media"), async (req, res) => {
   try {
-    const tourPackageId = parseInt(req.params.id)
-    const updateDataPackage = { ...req.body }
+    const tourPackageId = parseInt(req.params.id);
+    const updateDataPackage = { ...req.body };
 
     // const { nama_wisata_id, deskripsi_id, lokasi_id } = req.body
-    if (req.file) updateDataPackage.media = `/uploads/${req.file.filename}`
-    if (req.body.harga) updateDataPackage.harga = req.body.harga
-    if (req.body.kontak) updateDataPackage.kontak = req.body.kontak
-    if (req.body.link_video) updateDataPackage.link_video = req.body.link_video
+    if (req.file) updateDataPackage.media = `/uploads/${req.file.filename}`;
+    if (req.body.harga) updateDataPackage.harga = req.body.harga;
+    if (req.body.kontak) updateDataPackage.kontak = req.body.kontak;
+    if (req.body.link_video) updateDataPackage.link_video = req.body.link_video;
     const updateTourPackage = await tourPackageService.editTourPackageById(
       tourPackageId,
-      updateDataPackage
-    )
-    res.status(200).json(updateTourPackage)
+      updateDataPackage,
+    );
+    res.status(200).json(updateTourPackage);
   } catch (error) {
-    res.status(400).send(error.message)
+    res.status(400).send(error.message);
   }
-})
+});
 
-router.delete('/media/:id', async (req, res) => {
+router.delete("/media/:id", async (req, res) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
 
-    await tourPackageService.removeMedia(id)
+    await tourPackageService.removeMedia(id);
 
     res.status(200).send({
-      message: 'Media yang diupload berhasil dihapus'
-    })
+      message: "Media yang diupload berhasil dihapus",
+    });
   } catch (error) {
     res.status(400).send({
-      message: error.message
-    })
+      message: error.message,
+    });
   }
-})
+});
 
 // router.delete('/deleteAll', async (req, res) => {
 //   try {
@@ -107,14 +108,14 @@ router.delete('/media/:id', async (req, res) => {
 //   }
 // })
 
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
-    const tourPackageId = req.params.id
-    await tourPackageService.deleteTourPackageById(tourPackageId)
-    res.status(200).json({ message: 'Paket Wisata berhasil dihapus' })
+    const tourPackageId = req.params.id;
+    await tourPackageService.deleteTourPackageById(tourPackageId);
+    res.status(200).json({ message: "Paket Wisata berhasil dihapus" });
   } catch (error) {
-    res.status(400).send({ error: error.message })
+    res.status(400).send({ error: error.message });
   }
-})
+});
 
-module.exports = router
+module.exports = router;

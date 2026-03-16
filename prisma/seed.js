@@ -1,44 +1,44 @@
-const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcrypt");
-require("dotenv").config(); // Untuk membaca file .env
+const { PrismaClient } = require('@prisma/client')
+const bcrypt = require('bcrypt')
+require('dotenv').config() // Untuk membaca file .env
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-async function main() {
+async function main () {
   // 1. Ambil password dari .env
-  const rawPassword = process.env.SUPERADMIN_PASSWORD;
+  const rawPassword = process.env.SUPERADMIN_PASSWORD
 
   if (!rawPassword) {
-    throw new Error("Tolong set SUPERADMIN_PASSWORD di file .env Anda!");
+    throw new Error('Tolong set SUPERADMIN_PASSWORD di file .env Anda!')
   }
 
   // 2. Hash password-nya
-  const hashedPassword = await bcrypt.hash(rawPassword, 10);
+  const hashedPassword = await bcrypt.hash(rawPassword, 10)
 
-  console.log("Sedang membuat akun Super Admin...");
+  console.log('Sedang membuat akun Super Admin...')
 
   // 3. Masukkan ke database menggunakan upsert
   const superAdmin = await prisma.user.upsert({
-    where: { username: "superadminPariwisata" },
+    where: { username: 'superadminPariwsata' },
     update: {
-      password: hashedPassword, 
+      password: hashedPassword
     },
     create: {
-      username: "superadminPariwisata",
+      username: 'superadminPariwsata',
       password: hashedPassword,
-      nama_Lengkap: "Super Admin Dinas Pariwisata",
-      jenis_kelamin: "Laki-laki",
-      role: "superAdmin", 
-    },
+      nama_Lengkap: 'Super Admin Dinas Pariwisata',
+      jenis_kelamin: 'Laki-laki',
+      role: 'superAdmin'
+    }
   })
-  return superAdmin;
+  return superAdmin
 }
 
 main()
-  .catch((e) => {
-    console.error("❌ Terjadi kesalahan saat seeding:", e);
-    process.exit(1);
+  .catch(e => {
+    console.error('❌ Terjadi kesalahan saat seeding:', e)
+    process.exit(1)
   })
   .finally(async () => {
-    await prisma.$disconnect();
-  });
+    await prisma.$disconnect()
+  })

@@ -126,7 +126,8 @@ model Hotel {
   telepon            String
   jumlah_kamar       String
   jumlah_tempatTidur String
-  harga              String?
+  harga_minimum      String?
+  harga_maximum      String?
   website            String?
   link_gmaps         String
   lokasi             String

@@ -13,7 +13,8 @@ router.post('/insert', upload.single('foto'), async (req, res) => {
       deskripsi: req.body.deskripsi,
       jumlah_kamar: req.body.jumlah_kamar,
       jumlah_tempatTidur: req.body.jumlah_tempatTidur,
-      harga: req.body.harga,
+      harga_minimum: req.body.harga_minimum,
+      harga_maximum: req.body.harga_maximum,
       website: req.body.website,
       link_gmaps: req.body.link_gmaps,
       lokasi: req.body.lokasi,
@@ -57,7 +58,8 @@ router.patch('/:id', upload.single('foto'), async (req, res) => {
       ...(req.body.jumlah_tempatTidur && {
         jumlah_tempatTidur: req.body.jumlah_tempatTidur
       }),
-      ...(req.body.harga && { harga: req.body.harga }),
+      ...(req.body.harga_minimum && { harga_minimum: req.body.harga_minimum }),
+      ...(req.body.harga_maximum && { harga_maximum: req.body.harga_maximum }),
       ...(req.body.website && { website: req.body.website }),
       ...(req.body.link_gmaps && { link_gmaps: req.body.link_gmaps }),
       ...(req.body.lokasi && { lokasi: req.body.lokasi }),
